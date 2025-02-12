@@ -1,0 +1,27 @@
+import express from "express";
+import {
+  registerMember,
+  getMembers,
+  getMemberById,
+  updateMember,
+  deleteMember,
+} from "../controllers/member.controller.js";
+
+const router = express.Router();
+
+// Register a new member
+router.post("/register", registerMember);
+
+// Get all members
+router.get("/", getMembers);
+
+// Get a specific member by ID
+router.get("/:id", getMemberById);
+
+// Update a specific member by ID
+router.put("/:id", updateMember);
+
+// Delete a specific member by ID
+router.delete("/:id", deleteMember);
+
+export default router;
