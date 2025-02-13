@@ -1,13 +1,13 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import http from "http"; // Importing http to use with socket.io
-import socketIo from "socket.io"; // Import socket.io
-import connectDB from "./config/db.js";
-import authRoutes from "./routes/auth.routes.js";
-import applicationRoutes from "./routes/application.routes.js";
-import memberRoutes from "./routes/member.routes.js";
-import { errorHandler } from "./utils/errorHandler.js";
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const http = require("http");
+const socketIo = require("socket.io");
+const connectDB = require("./config/db.js");
+const authRoutes = require("./routes/auth.routes.js");
+const applicationRoutes = require("./routes/application.routes.js");
+const memberRoutes = require("./routes/member.routes.js");
+const errorHandler = require("./utils/errorHandler.js");
 
 dotenv.config();
 
@@ -40,8 +40,10 @@ connectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/applications", applicationRoutes);
 app.use("/api/members", memberRoutes);
+
+// Pass Socket.io instance to routes/controllers that need real-time events
+app.use("/api/applications", applicationRoutes(io));
 
 // Socket.IO event for real-time communication
 io.on("connection", (socket) => {

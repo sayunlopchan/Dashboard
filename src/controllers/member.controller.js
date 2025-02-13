@@ -1,6 +1,6 @@
-import Member from "../models/Member.model.js";
-import Log from "../models/Log.model.js";
-import asyncHandler from "express-async-handler";
+const Member = require("../models/Member.model.js");
+const Log = require("../models/Log.model.js");
+const asyncHandler = require("express-async-handler");
 
 // Register a new member
 const registerMember = asyncHandler(async (req, res) => {
@@ -156,7 +156,7 @@ const deleteMember = asyncHandler(async (req, res) => {
   }
 });
 
-export {
+module.exports = {
   registerMember,
   getMembers,
   getMemberById,

@@ -1,21 +1,21 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   registerApplication,
   getApplications,
   getApplicationById,
   updateApplication,
   deleteApplication,
   approveApplication,
-} from "../controllers/application.controller.js";
+} = require("../controllers/application.controller.js");
 
 const router = express.Router();
 
-// Routes
-router.post("/register", registerApplication);
+// Set up routes and pass `io` as an argument to the controller functions
+router.post("/", (req, res) => registerApplication(io)(req, res));
 router.get("/", getApplications);
 router.get("/:id", getApplicationById);
-router.put("/:id", updateApplication);
-router.delete("/:id", deleteApplication);
-router.put("/:id/approve", approveApplication);
+router.put("/:id", (req, res) => updateApplication(io)(req, res));
+router.delete("/:id", (req, res) => deleteApplication(io)(req, res));
+router.post("/:id/approve", (req, res) => approveApplication(io)(req, res));
 
-export default router;
+module.exports = router;
