@@ -6,16 +6,22 @@ const {
   updateApplication,
   deleteApplication,
   approveApplication,
+  filterApplications,
 } = require("../controllers/application.controller.js");
 
 const router = express.Router();
 
-// Set up routes and pass `io` as an argument to the controller functions
-router.post("/", (req, res) => registerApplication(io)(req, res));
+// Routes
+router.post("/register", registerApplication);
 router.get("/", getApplications);
+
+// Filter applications (must come before /:id)
+router.get("/filter", filterApplications);
+
+// Get application by ID (must come after /filter)
 router.get("/:id", getApplicationById);
-router.put("/:id", (req, res) => updateApplication(io)(req, res));
-router.delete("/:id", (req, res) => deleteApplication(io)(req, res));
-router.post("/:id/approve", (req, res) => approveApplication(io)(req, res));
+router.put("/:id", updateApplication);
+router.delete("/:id", deleteApplication);
+router.put("/:id/approve", approveApplication);
 
 module.exports = router;

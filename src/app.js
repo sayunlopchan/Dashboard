@@ -1,25 +1,24 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const http = require("http");
-const socketIo = require("socket.io");
 const connectDB = require("./config/db.js");
 const authRoutes = require("./routes/auth.routes.js");
 const applicationRoutes = require("./routes/application.routes.js");
 const memberRoutes = require("./routes/member.routes.js");
 const errorHandler = require("./utils/errorHandler.js");
 
+
+
+
 dotenv.config();
 
 const app = express();
-
-// Create HTTP server
-const server = http.createServer(app);
-
-// Create a Socket.IO instance attached to the server
-const io = socketIo(server, {
+const server = http.createServer(app); // Create HTTP server
+const io = new Server(server, {
   cors: {
-    origin: "http://127.0.0.1:5501", // Frontend URL
+    origin: "http://127.0.0.1:5500", // frontend URL
     credentials: true,
   },
 });
@@ -27,7 +26,7 @@ const io = socketIo(server, {
 // Enable CORS
 app.use(
   cors({
-    origin: "http://127.0.0.1:5501", // Frontend URL
+    origin: "http://127.0.0.1:5500",
     credentials: true,
   })
 );
@@ -38,25 +37,25 @@ app.use(express.json());
 // Database connection
 connectDB();
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/members", memberRoutes);
-
-// Pass Socket.io instance to routes/controllers that need real-time events
-app.use("/api/applications", applicationRoutes(io));
-
-// Socket.IO event for real-time communication
+// Listen for socket connections
 io.on("connection", (socket) => {
-  console.log("New client connected");
+  console.log("A client connected:", socket.id);
 
-  // Example of sending an event to the client
-  socket.emit("welcome", { message: "Welcome to the server!" });
-
-  // Handling disconnection
+  // Disconnect handler
   socket.on("disconnect", () => {
-    console.log("Client disconnected");
+    console.log("Client disconnected:", socket.id);
   });
 });
+
+// Attach io to app for global access
+app.set("io", io);
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/applications", applicationRoutes);
+app.use("/api/members", memberRoutes);
+
+
 
 // Error handler
 app.use(errorHandler);

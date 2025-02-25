@@ -14,6 +14,8 @@ const memberSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
     personalPhoneNumber: {
       type: String,
@@ -21,6 +23,15 @@ const memberSchema = new mongoose.Schema(
     },
     address: {
       type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female"],
+      required: true,
+    },
+    dob: {
+      type: Date,
       required: true,
     },
     emergencyContact: {
@@ -40,19 +51,60 @@ const memberSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      address: {
-        type: String,
-        required: true,
-      },
     },
-    medicalInfo: {
+    additionalInfo: {
       type: String,
-      default: "",
+      default: "none",
     },
-    approvedAt: {
+    membershipType: {
+      type: String,
+      required: true,
+      enum: ["basic", "premium"],
+    },
+    membershipPeriod: {
+      type: String,
+      required: true,
+      enum: ["1 day", "1 month", "3 months", "1 year",],
+    },
+    membershipStartDate: {
       type: Date,
-      default: Date.now,
+      required: true,
     },
+    membershipEndDate: {
+      type: Date,
+      required: false,
+    },
+    memberId: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    renew: {
+      type: Boolean,
+      default: false,
+    },
+    renewCount: {
+      type: Number,
+      default: 0,
+    },
+    renewedDate: [
+      {
+        type: Date,
+      }
+    ],
+    payment: [
+      {
+        type: String,
+        enum: ["paid", "unpaid", "pending"],
+        default: "pending"
+      }
+    ]
+    ,
+    paymentAmt: [
+      {
+        type: Number,
+      }
+    ],
   },
   { timestamps: true }
 );

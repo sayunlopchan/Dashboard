@@ -23,6 +23,15 @@ const applicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    dob: {
+      type: Date,
+      required: true,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female"],
+      required: true,
+    },
     emergencyContact: {
       name: {
         type: String,
@@ -40,32 +49,25 @@ const applicationSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      address: {
-        type: String,
-        required: true,
-      },
     },
-    medicalInfo: {
+    additionalInfo: {
       type: String,
-      default: "",
+      default: "none",
     },
-    status: {
+    membershipType: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "pending",
+      enum: ["basic", "premium"],
+      required: true,
     },
-    statusHistory: [
-      {
-        status: {
-          type: String,
-          enum: ["pending", "approved", "rejected"],
-        },
-        updatedAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
+    membershipPeriod: {
+      type: String,
+      enum: ["1 month", "3 months", "1 year"],
+      required: true,
+    },
+    membershipStartDate: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: true }
 );
