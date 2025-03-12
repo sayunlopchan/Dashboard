@@ -6,11 +6,9 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db.js");
 const authRoutes = require("./routes/auth.routes.js");
 const applicationRoutes = require("./routes/application.routes.js");
+const notificationRoutes = require("./routes/notification.routes");
 const memberRoutes = require("./routes/member.routes.js");
 const errorHandler = require("./utils/errorHandler.js");
-
-
-
 
 dotenv.config();
 
@@ -54,8 +52,7 @@ app.set("io", io);
 app.use("/api/auth", authRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/members", memberRoutes);
-
-
+app.use("/api/notifications", notificationRoutes);
 
 // Error handler
 app.use(errorHandler);

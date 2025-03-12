@@ -1,13 +1,15 @@
 const asyncHandler = require("express-async-handler");
-const Notification = require("../models/Notification");
+const Notification = require("../models/Notification.model");
 
-// Fetch all notifications (newest first)
+// Fetch all notifications (newest first) with populated application data
 const getNotifications = asyncHandler(async (req, res) => {
-  const notifications = await Notification.find().sort({ createdAt: -1 });
-  res.json(notifications);
+  const notifications = await Notification.find()
+    .populate("applicationId")
+    .sort({ createdAt: -1 });
+  res.status(200).json(notifications);
 });
 
-// Mark a notification as read
+// Mark a single notification as read
 const markAsRead = asyncHandler(async (req, res) => {
   const notification = await Notification.findById(req.params.id);
 
@@ -19,7 +21,38 @@ const markAsRead = asyncHandler(async (req, res) => {
   notification.isRead = true;
   await notification.save();
 
-  res.json({ message: "Notification marked as read", notification });
+  res.status(200).json({ message: "Notification marked as read", notification });
 });
 
-module.exports = { getNotifications, markAsRead };
+// Mark all notifications as read
+const markAllAsRead = asyncHandler(async (req, res) => {
+  await Notification.updateMany({ isRead: false }, { isRead: true });
+  res.status(200).json({ message: "All notifications marked as read" });
+});
+
+// Delete a single notification by ID
+const deleteNotification = asyncHandler(async (req, res) => {
+  const notification = await Notification.findById(req.params.id);
+
+  if (!notification) {
+    res.status(404);
+    throw new Error("Notification not found");
+  }
+
+  await notification.remove();
+  res.status(200).json({ message: "Notification deleted", id: req.params.id });
+});
+
+// Delete all notifications
+const deleteAllNotifications = asyncHandler(async (req, res) => {
+  await Notification.deleteMany({});
+  res.status(200).json({ message: "All notifications deleted" });
+});
+
+module.exports = {
+  getNotifications,
+  markAsRead,
+  markAllAsRead,
+  deleteNotification,
+  deleteAllNotifications,
+};

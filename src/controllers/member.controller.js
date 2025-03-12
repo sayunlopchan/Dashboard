@@ -19,6 +19,8 @@ const registerMember = asyncHandler(async (req, res) => {
     membershipStartDate,
   } = req.body;
 
+
+
   // Check if member already exists
   const memberExists = await Member.findOne({ email });
   if (memberExists) {
@@ -273,216 +275,125 @@ const filterMembers = asyncHandler(async (req, res) => {
   }
 });
 
-// Renew Membership and emit an event to notify clients
-const renewMembership = asyncHandler(async (req, res) => {
+
+// Renew (Extend) Membership and Process Payment
+const renewAndPayMembership = asyncHandler(async (req, res) => {
   const { memberId } = req.params;
-  const { membershipPeriod } = req.body;
+  const { membershipPeriod, paymentAmount } = req.body;
 
-  try {
-    const member = await Application.findById(memberId);
-    if (!member) {
-      return res.status(404).json({ error: "Member not found" });
-    }
-
-    // Validate the selected membership period based on the schema
-    const validPeriods = ["1 day", "1 month", "3 months", "1 year"];
-    if (!validPeriods.includes(membershipPeriod)) {
-      return res.status(400).json({ error: "Invalid membership period selected" });
-    }
-
-    // Parse current membership start date or use today's date if not set
-    const currentStartDate = member.membershipStartDate ? new Date(member.membershipStartDate) : new Date();
-    let newEndDate = new Date(currentStartDate);
-
-    // Increment the membership period based on renewal
-    switch (membershipPeriod) {
-      case "1 day":
-        newEndDate.setDate(newEndDate.getDate() + 1);
-        break;
-      case "1 month":
-        newEndDate.setMonth(newEndDate.getMonth() + 1);
-        break;
-      case "3 months":
-        newEndDate.setMonth(newEndDate.getMonth() + 3);
-        break;
-      case "1 year":
-        newEndDate.setFullYear(newEndDate.getFullYear() + 1);
-        break;
-      default:
-        break;
-    }
-
-    // Update membership details
-    member.membershipPeriod = membershipPeriod;
-    member.membershipStartDate = currentStartDate;
-    member.membershipEndDate = newEndDate;
-
-    await member.save();
-
-    // Emit an event to notify clients about the membership renewal
-    const io = req.app.get("io");
-    if (io) {
-      io.emit("membershipRenewed", member);
-    }
-
-    res.status(200).json({
-      message: "Membership successfully renewed",
-      member,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: "An error occurred while renewing membership",
-      details: error.message,
-    });
-  }
-});
-
-// Updates the payment status and membership renewal
-const updatePaymentAndRenewal = asyncHandler(async (req, res) => {
-  const { memberId } = req.params;
-  const { paymentAmount } = req.body;
-
-  // Validate that paymentAmount is provided as a number.
+  // Validate paymentAmount
   if (paymentAmount == null || typeof paymentAmount !== "number") {
     return res.status(400).json({ error: "Payment amount must be provided as a number" });
   }
 
-  // Find the member by memberId.
-  const member = await Member.findOne({ memberId });
-  if (!member) {
-    return res.status(404).json({ error: "Member not found" });
-  }
+  try {
+    const member = await Member.findOne({ memberId });
+    if (!member) {
+      return res.status(404).json({ error: "Member not found" });
+    }
 
-  const now = new Date();
+    // Use membership period from the database if not provided in req.body
+    const validPeriods = ["1 month", "3 months", "1 year"];
+    let period = membershipPeriod || member.membershipPeriod;
 
-  // CASE 1: Membership period is over (i.e. the due date has passed).
-  if (now >= member.membershipEndDate) {
+    if (!validPeriods.includes(period)) {
+      return res.status(400).json({ error: "Invalid membership period selected" });
+    }
+    console.log("Before: ", member.membershipPeriod)
+    // Update the membershipPeriod in the database if provided
+    if (membershipPeriod) {
+      member.membershipPeriod = membershipPeriod;
+    }
+    console.log("After: ", member.membershipPeriod)
+    // Initialize payment arrays if needed
+    member.payment = member.payment || [];
+    member.paymentAmt = member.paymentAmt || [];
+    member.paymentDate = member.paymentDate || [];
+
+    // Remove any existing pending payment before processing
+    if (member.payment.length > 0 && member.payment[member.payment.length - 1] === "pending") {
+      member.payment.pop();
+      member.paymentAmt.pop();
+      member.paymentDate.pop();
+    }
+
+    // Process Payment Entry
     if (paymentAmount > 0) {
-      // Check if this is the very first payment (joining payment).
-      if (member.payment.length === 1 && member.payment[0] === "pending") {
-        // Update the joining payment record to "paid" without processing a renewal.
-        member.payment[0] = "paid";
-        member.paymentAmt[0] = paymentAmount;
-      } else {
-        // Otherwise, this is a renewal payment.
-        if (
-          member.payment.length > 0 &&
-          member.payment[member.payment.length - 1] === "pending"
-        ) {
-          member.payment[member.payment.length - 1] = "paid";
-          member.paymentAmt[member.paymentAmt.length - 1] = paymentAmount;
-        } else {
-          member.payment.push("paid");
-          member.paymentAmt.push(paymentAmount);
-        }
-
-        // Process renewal: increase renewCount and update membershipEndDate.
-        member.renewCount = (member.renewCount || 0) + 1;
-        let newEndDate = new Date(now);
-        const period = member.membershipPeriod;
-        switch (period) {
-          case "1 day":
-            newEndDate.setDate(newEndDate.getDate() + 1);
-            break;
-          case "1 month":
-            newEndDate.setMonth(newEndDate.getMonth() + 1);
-            break;
-          case "3 months":
-            newEndDate.setMonth(newEndDate.getMonth() + 3);
-            break;
-          case "1 year":
-            newEndDate.setFullYear(newEndDate.getFullYear() + 1);
-            break;
-          default:
-            break;
-        }
-        member.membershipEndDate = newEndDate;
-        member.renew = true;
-      }
+      member.payment.push("paid");
+      member.paymentAmt.push(paymentAmount);
+      member.paymentDate.push(new Date());
     } else {
-      // If no payment is made when due, ensure that the latest payment status remains "pending".
-      if (
-        member.payment.length === 0 ||
-        member.payment[member.payment.length - 1] !== "pending"
-      ) {
-        member.payment.push("pending");
-        member.paymentAmt.push(0);
+      member.payment.push("pending");
+      member.paymentAmt.push(0);
+      member.paymentDate.push(new Date());
+    }
+
+    // Determine if this is the first activation (no membershipEndDate exists)
+    const isFirstActivation = !member.membershipEndDate;
+
+    if (isFirstActivation) {
+      // First Payment: Create membershipEndDate based on provided period (or stored period)
+      let baseDate = member.membershipStartDate && new Date(member.membershipStartDate) > new Date()
+        ? new Date(member.membershipStartDate)
+        : new Date();
+
+      let newEndDate = new Date(baseDate);
+      switch (period) {
+        case "1 month":
+          newEndDate.setMonth(newEndDate.getMonth() + 1);
+          break;
+        case "3 months":
+          newEndDate.setMonth(newEndDate.getMonth() + 3);
+          break;
+        case "1 year":
+          newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+          break;
       }
-    }
-  }
-  // CASE 2: Membership period is still active.
-  else {
-    if (paymentAmount > 0) {
-      if (
-        member.payment.length > 0 &&
-        member.payment[member.payment.length - 1] === "pending"
-      ) {
-        member.payment[member.payment.length - 1] = "paid";
-        member.paymentAmt[member.paymentAmt.length - 1] = paymentAmount;
-      } else {
-        member.payment.push("paid");
-        member.paymentAmt.push(paymentAmount);
+      member.membershipEndDate = newEndDate;
+      // Do NOT update renewal fields on first activation.
+    } else {
+      // Renewal Payment: Extend the current membershipEndDate.
+      let baseDate = new Date(member.membershipEndDate);
+      if (baseDate < new Date()) {
+        baseDate = new Date(); // if expired, start from now
       }
-      // No renewal processing is done here.
+      let newEndDate = new Date(baseDate);
+      switch (period) {
+        case "1 month":
+          newEndDate.setMonth(newEndDate.getMonth() + 1);
+          break;
+        case "3 months":
+          newEndDate.setMonth(newEndDate.getMonth() + 3);
+          break;
+        case "1 year":
+          newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+          break;
+      }
+      member.membershipEndDate = newEndDate;
+      member.renewCount = (member.renewCount || 0) + 1;
+      member.renew = true;
+      member.extendDate = [...(member.extendDate || []), new Date()];
     }
-  }
 
-  // Save the updated member details
-  await member.save();
+    await member.save();
 
-  // ----- Check conditions and create notifications for admin -----
-
-  // Condition 1:
-  // If membershipStartDate is about to start within the next 24 hours and payment is pending.
-  if (member.membershipStartDate) {
-    const diffStart = member.membershipStartDate - now;
-    if (
-      diffStart > 0 &&
-      diffStart <= 24 * 60 * 60 * 1000 &&
-      member.payment.length > 0 &&
-      member.payment[member.payment.length - 1] === "pending"
-    ) {
-      await Notification.create({
-        type: "membership",
-        message: `Membership for ${member.firstName} ${member.lastName} is about to start, but payment is pending.`,
-        applicationId: member._id,
-      });
+    // Emit update event
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("membershipRenewedAndPaid", member);
     }
-  }
 
-  // Condition 2:
-  // If membershipPeriod is about to end within 7 days and has not been renewed.
-  if (member.membershipEndDate) {
-    const diffEnd = member.membershipEndDate - now;
-    if (diffEnd > 0 && diffEnd <= 7 * 24 * 60 * 60 * 1000 && !member.renew) {
-      await Notification.create({
-        type: "membership",
-        message: `Membership for ${member.firstName} ${member.lastName} is about to end and has not been renewed.`,
-        applicationId: member._id,
-      });
-    }
-  }
+    const message = isFirstActivation
+      ? "Payment processed successfully. Membership activated."
+      : `Payment processed successfully. Membership extended until ${member.membershipEndDate.toISOString()}`;
 
-  // Condition 3:
-  // If the membership period has ended.
-  if (member.membershipEndDate && now >= member.membershipEndDate) {
-    await Notification.create({
-      type: "membership",
-      message: `Membership for ${member.firstName} ${member.lastName} has ended.`,
-      applicationId: member._id,
+    return res.status(200).json({ message, member });
+  } catch (error) {
+    return res.status(500).json({
+      error: "An error occurred while processing payment and updating membership.",
+      details: error.message,
     });
   }
-
-  // Emit an event to notify connected clients about the payment and renewal update.
-  const io = req.app.get("io");
-  if (io) {
-    io.emit("paymentStatusUpdated", member);
-  }
-
-  return res.status(200).json({
-    message: "Payment and renewal updated successfully",
-    member,
-  });
 });
 
 
@@ -496,6 +407,5 @@ module.exports = {
   deleteMember,
   filterMembers,
   searchMembers,
-  renewMembership,
-  updatePaymentAndRenewal,
+  renewAndPayMembership
 };

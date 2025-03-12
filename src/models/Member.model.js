@@ -64,7 +64,7 @@ const memberSchema = new mongoose.Schema(
     membershipPeriod: {
       type: String,
       required: true,
-      enum: ["1 day", "1 month", "3 months", "1 year",],
+      enum: ["1 month", "3 months", "1 year"],
     },
     membershipStartDate: {
       type: Date,
@@ -87,7 +87,7 @@ const memberSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    renewedDate: [
+    extendDate: [
       {
         type: Date,
       }
@@ -98,11 +98,15 @@ const memberSchema = new mongoose.Schema(
         enum: ["paid", "unpaid", "pending"],
         default: "pending"
       }
-    ]
-    ,
+    ],
     paymentAmt: [
       {
         type: Number,
+      }
+    ],
+    paymentDate: [
+      {
+        type: Date,
       }
     ],
   },

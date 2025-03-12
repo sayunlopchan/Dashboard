@@ -4,7 +4,7 @@ const Member = require("../models/Member.model.js");
 const generateUniqueId = require("../utils/idGenerator.js");
 const Notification = require("../models/Notification.model.js");
 
-// Register application and create notifaction
+// Register application and create notification
 const registerApplication = asyncHandler(async (req, res) => {
   const {
     firstName,
@@ -20,6 +20,13 @@ const registerApplication = asyncHandler(async (req, res) => {
     membershipPeriod,
     membershipStartDate,
   } = req.body;
+
+  // Check if the member already exists
+  const memberExists = await Member.findOne({ email });
+  if (memberExists) {
+    res.status(400);
+    throw new Error("Member with this email already exists");
+  }
 
   // Check if the application already exists
   const applicationExists = await Application.findOne({ email });
@@ -50,15 +57,17 @@ const registerApplication = asyncHandler(async (req, res) => {
       type: "application",
       message: `New application from ${firstName} ${lastName}`,
       applicationId: application._id,
+      isRead: false,
+      createdAt: new Date(),
     });
 
-    // Emit real-time notification using Socket.io (if available)
+    // Emit the notification to all connected clients via Socket.io
     const io = req.app.get("io");
     if (io) {
-      io.emit("newApplication", { notification });
+      io.emit("newNotification", notification);
     }
 
-    res.status(201).json(application);
+    res.status(201).json({ application, notification });
   } else {
     res.status(400);
     throw new Error("Invalid application data");
@@ -162,6 +171,7 @@ const deleteApplication = asyncHandler(async (req, res) => {
   }
 });
 
+
 // Approve application and create a member with generated custom memberID
 const approveApplication = asyncHandler(async (req, res) => {
   try {
@@ -198,7 +208,6 @@ const approveApplication = asyncHandler(async (req, res) => {
       membershipStartDate: application.membershipStartDate,
       memberId,
     });
-
 
     // Update the application status to 'approved'
     application.status = "approved";

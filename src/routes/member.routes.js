@@ -7,8 +7,7 @@ const {
   deleteMember,
   filterMembers,
   searchMembers,
-  renewMembership,
-  updatePaymentAndRenewal,
+  renewAndPayMembership
 } = require("../controllers/member.controller.js");
 
 const router = express.Router();
@@ -34,10 +33,6 @@ router.put("/:id", updateMember);
 // Delete a specific member by ID
 router.delete("/:id", deleteMember);
 
-// Renew membership for a specific member by memberId
-router.post("/renew/:memberId", renewMembership);
-
-// Update payment & process renewal for a specific member by memberId
-router.post("/payment/:memberId", updatePaymentAndRenewal);
+router.put("/renew/:memberId", renewAndPayMembership);
 
 module.exports = router;
