@@ -95,8 +95,8 @@ const memberSchema = new mongoose.Schema(
     payment: [
       {
         type: String,
-        enum: ["paid", "unpaid", "pending"],
-        default: "pending",
+        enum: ["paid", "unpaid"],
+        default: "unpaid",
       },
     ],
     paymentAmt: [
