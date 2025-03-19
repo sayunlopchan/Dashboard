@@ -13,21 +13,16 @@ const errorHandler = require("./utils/errorHandler.js");
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // Create HTTP server
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://127.0.0.1:5500", // frontend URL
+    origin: "http://127.0.0.1:5500",
     credentials: true,
   },
 });
 
 // Enable CORS
-app.use(
-  cors({
-    origin: "http://127.0.0.1:5500",
-    credentials: true,
-  })
-);
+app.use(cors());
 
 // Middleware
 app.use(express.json());

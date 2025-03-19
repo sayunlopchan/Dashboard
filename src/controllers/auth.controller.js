@@ -1,7 +1,10 @@
-const User = require("../models/User.model.js");
+const User = require("../models/Auth.model.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { signupSchema, loginSchema } = require("../validators/auth.validator.js");
+const {
+  signupSchema,
+  loginSchema,
+} = require("../validators/auth.validator.js");
 
 // Signup
 const signup = async (req, res) => {
@@ -45,20 +48,29 @@ const login = async (req, res) => {
 
     // Find the user by email
     const user = await User.findOne({ email });
-    if (!user)
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
     // Compare the plain text password with the hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    // Generate a JWT for the authenticated user
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    // Generate a token
+    const token = jwt.sign(
+      { id: user._id, admin: user.admin }, // Include admin status in the token payload
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    res.status(200).json({ token });
+    // Return the token and user data
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        admin: user.admin, // Include admin status in the response
+      },
+    });
   } catch (error) {
     console.error(error); // Log error for debugging
     res.status(500).json({ message: "Server error" });
