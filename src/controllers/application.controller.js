@@ -3,6 +3,7 @@ const Application = require("../models/Application.model.js");
 const Member = require("../models/Member.model.js");
 const generateUniqueId = require("../utils/idGenerator.js");
 const Notification = require("../models/Notification.model.js");
+const ApplicationsData = require("../models/ApplicationsData.model.js");
 
 // Register application and create notification
 const registerApplication = asyncHandler(async (req, res) => {
@@ -52,6 +53,13 @@ const registerApplication = asyncHandler(async (req, res) => {
   });
 
   if (application) {
+    // Store minimal application data for historical/chart purposes
+    const appData = await ApplicationsData.create({
+      applicationId: application._id,
+      date: application.createdAt || new Date(),
+      membershipType: membershipType,
+    });
+
     // Create a notification for the new application
     const notification = await Notification.create({
       type: "application",
@@ -65,6 +73,8 @@ const registerApplication = asyncHandler(async (req, res) => {
     const io = req.app.get("io");
     if (io) {
       io.emit("newNotification", notification);
+      io.emit("newApplication", application); // Emit new application event
+      io.emit("newApplicationsData", appData); // Emit new application data event
     }
 
     res.status(201).json({ application, notification });
@@ -80,8 +90,9 @@ const getApplications = asyncHandler(async (req, res) => {
 
   // Emit the event with the applications data
   const io = req.app.get("io");
-  io.emit("applicationsFetched", applications);
-
+  if (io) {
+    io.emit("applicationsFetched", applications);
+  }
   res.json(applications);
 });
 
@@ -113,7 +124,8 @@ const updateApplication = asyncHandler(async (req, res) => {
 
     if (!application) {
       return res.status(404).json({
-        error: "Application not found. The ID may be invalid or does not exist.",
+        error:
+          "Application not found. The ID may be invalid or does not exist.",
       });
     }
 
@@ -121,15 +133,21 @@ const updateApplication = asyncHandler(async (req, res) => {
     application.firstName = req.body.firstName || application.firstName;
     application.lastName = req.body.lastName || application.lastName;
     application.email = req.body.email || application.email;
-    application.personalPhoneNumber = req.body.personalPhoneNumber || application.personalPhoneNumber;
+    application.personalPhoneNumber =
+      req.body.personalPhoneNumber || application.personalPhoneNumber;
     application.address = req.body.address || application.address;
     application.gender = req.body.gender || application.gender;
     application.dob = req.body.dob || application.dob;
-    application.emergencyContact = req.body.emergencyContact || application.emergencyContact;
-    application.additionalInfo = req.body.additionalInfo || application.additionalInfo;
-    application.membershipType = req.body.membershipType || application.membershipType;
-    application.membershipPeriod = req.body.membershipPeriod || application.membershipPeriod;
-    application.membershipStartDate = req.body.membershipStartDate || application.membershipStartDate;
+    application.emergencyContact =
+      req.body.emergencyContact || application.emergencyContact;
+    application.additionalInfo =
+      req.body.additionalInfo || application.additionalInfo;
+    application.membershipType =
+      req.body.membershipType || application.membershipType;
+    application.membershipPeriod =
+      req.body.membershipPeriod || application.membershipPeriod;
+    application.membershipStartDate =
+      req.body.membershipStartDate || application.membershipStartDate;
 
     // Save updated application
     const updatedApplication = await application.save();
@@ -153,6 +171,13 @@ const deleteApplication = asyncHandler(async (req, res) => {
 
     if (application) {
       await Application.deleteOne({ _id: application._id });
+
+      // Emit event to notify all connected clients
+      const io = req.app.get("io");
+      if (io) {
+        io.emit("applicationRemoved", application._id);
+      }
+
       res.status(200).json({
         message: "Application successfully removed",
         id: application._id,
@@ -171,7 +196,6 @@ const deleteApplication = asyncHandler(async (req, res) => {
   }
 });
 
-
 // Approve application and create a member with generated custom memberID
 const approveApplication = asyncHandler(async (req, res) => {
   try {
@@ -179,7 +203,8 @@ const approveApplication = asyncHandler(async (req, res) => {
 
     if (!application) {
       return res.status(404).json({
-        error: "Application not found. The ID may be invalid or does not exist.",
+        error:
+          "Application not found. The ID may be invalid or does not exist.",
       });
     }
 
@@ -216,15 +241,20 @@ const approveApplication = asyncHandler(async (req, res) => {
     // Remove the approved application from the Application collection
     await Application.deleteOne({ _id: application._id });
 
-    // Emit event to notify all connected clients about the new member
+    // Emit events to notify all connected clients
     const io = req.app.get("io");
-    io.emit("newMember", member);
-
-    // Emit event to notify all connected clients about the application approval
-    io.emit("applicationApproved", { applicationId: application._id, member });
+    if (io) {
+      io.emit("newMember", member); // Emit new member event
+      io.emit("applicationApproved", {
+        applicationId: application._id,
+        member,
+      }); // Emit application approved event
+      io.emit("applicationRemoved", application._id); // Emit application removed event
+    }
 
     res.status(201).json({
-      message: "Application approved, member created, and application removed successfully",
+      message:
+        "Application approved, member created, and application removed successfully",
       member,
     });
   } catch (error) {
@@ -300,6 +330,119 @@ const filterApplications = asyncHandler(async (req, res) => {
   }
 });
 
+// Bulk register applications
+const bulkRegisterApplications = asyncHandler(async (req, res) => {
+  const applications = req.body;
+
+  if (!Array.isArray(applications)) {
+    res.status(400).json({ error: "Invalid data format. Expected an array." });
+    return;
+  }
+
+  try {
+    const registeredApplications = [];
+    const io = req.app.get("io");
+
+    for (const appData of applications) {
+      const { firstName, lastName, email, membershipType } = appData;
+
+      // Check if the member or application already exists
+      const memberExists = await Member.findOne({ email });
+      const applicationExists = await Application.findOne({ email });
+
+      if (!memberExists && !applicationExists) {
+        // Create a new application
+        const newApplication = await Application.create(appData);
+
+        // Store minimal application data for analytics/charting
+        const appDataEntry = await ApplicationsData.create({
+          applicationId: newApplication._id,
+          date: newApplication.createdAt || new Date(),
+          membershipType,
+        });
+
+        // Create a notification
+        await Notification.create({
+          type: "application",
+          message: `New application from ${firstName} ${lastName}`,
+          applicationId: newApplication._id,
+          isRead: false,
+          createdAt: new Date(),
+        });
+
+        registeredApplications.push(newApplication);
+
+        // Emit events for each new application
+        if (io) {
+          io.emit("newApplication", newApplication);
+          io.emit("newApplicationsData", appDataEntry);
+        }
+      }
+    }
+
+    res.status(201).json({ registeredApplications });
+  } catch (error) {
+    res.status(500).json({
+      error: "Error registering applications",
+      details: error.message,
+    });
+  }
+});
+
+// Bulk approve applications
+const bulkApproveApplications = asyncHandler(async (req, res) => {
+  const applicationIds = req.body;
+
+  if (!Array.isArray(applicationIds)) {
+    res
+      .status(400)
+      .json({ error: "Invalid data format. Expected an array of IDs." });
+    return;
+  }
+
+  try {
+    const approvedMembers = [];
+
+    for (const appId of applicationIds) {
+      const application = await Application.findById(appId);
+
+      if (application && application.status !== "approved") {
+        const memberId = await generateUniqueId();
+
+        // Create member
+        const member = await Member.create({
+          firstName: application.firstName,
+          lastName: application.lastName,
+          email: application.email,
+          personalPhoneNumber: application.personalPhoneNumber,
+          address: application.address,
+          gender: application.gender,
+          dob: application.dob,
+          emergencyContact: application.emergencyContact,
+          additionalInfo: application.additionalInfo,
+          membershipType: application.membershipType,
+          membershipPeriod: application.membershipPeriod,
+          membershipStartDate: application.membershipStartDate,
+          memberId,
+        });
+
+        // Mark application as approved and remove
+        application.status = "approved";
+        await application.save();
+        await Application.deleteOne({ _id: application._id });
+
+        approvedMembers.push(member);
+      }
+    }
+
+    res.status(200).json({ approvedMembers });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error approving applications", details: error.message });
+  }
+});
+
 module.exports = {
   registerApplication,
   getApplications,
@@ -308,4 +451,6 @@ module.exports = {
   deleteApplication,
   approveApplication,
   filterApplications,
+  bulkRegisterApplications,
+  bulkApproveApplications,
 };

@@ -1,3 +1,4 @@
+// app.js
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -9,11 +10,14 @@ const applicationRoutes = require("./routes/application.routes.js");
 const notificationRoutes = require("./routes/notification.routes");
 const memberRoutes = require("./routes/member.routes.js");
 const errorHandler = require("./utils/errorHandler.js");
+const applicationsData = require("./routes/applicationsData.routes.js");
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server
+
+// Initialize Socket.IO server
 const io = new Server(server, {
   cors: {
     origin: "http://127.0.0.1:5500", // frontend URL
@@ -21,7 +25,7 @@ const io = new Server(server, {
   },
 });
 
-// Enable CORS
+// Enable CORS for Express routes too
 app.use(
   cors({
     origin: "http://127.0.0.1:5500",
@@ -32,31 +36,45 @@ app.use(
 // Middleware
 app.use(express.json());
 
-// Database connection
+// Connect to the database
 connectDB();
 
-// Listen for socket connections
+// Socket.IO event handling
 io.on("connection", (socket) => {
   console.log("A client connected:", socket.id);
 
-  // Disconnect handler
+  // Listen for a "fetchMembers" event from the client.
+  socket.on("fetchMembers", async () => {
+    try {
+      // Import the Member model (adjust path as needed)
+      const Member = require("./models/Member.model.js");
+      const members = await Member.find({});
+      // Send the fetched members back to the client via "membersData" event.
+      socket.emit("membersData", { members });
+    } catch (error) {
+      console.error("Error fetching members via socket:", error);
+      socket.emit("membersData", { members: [] });
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected:", socket.id);
   });
 });
 
-// Attach io to app for global access
+// Attach io to app so routes can use it if needed
 app.set("io", io);
 
-// Routes
+// Define API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/applicationsdata", applicationsData);
 
-// Error handler
+// Error handler middleware
 app.use(errorHandler);
 
-// Start server
+// Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

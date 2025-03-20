@@ -90,24 +90,24 @@ const memberSchema = new mongoose.Schema(
     extendDate: [
       {
         type: Date,
-      }
+      },
     ],
     payment: [
       {
         type: String,
-        enum: ["paid", "unpaid", "pending"],
-        default: "pending"
-      }
+        enum: ["paid", "unpaid"],
+        default: "unpaid",
+      },
     ],
     paymentAmt: [
       {
         type: Number,
-      }
+      },
     ],
     paymentDate: [
       {
         type: Date,
-      }
+      },
     ],
   },
   { timestamps: true }
