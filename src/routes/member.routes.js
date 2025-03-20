@@ -1,14 +1,11 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   registerMember,
   getMembers,
   getMemberById,
   updateMember,
   deleteMember,
-  filterMembers,
-  searchMembers,
-  renewAndPayMembership
-} = require("../controllers/member.controller.js");
+} from "../controllers/member.controller.js";
 
 const router = express.Router();
 
@@ -17,12 +14,6 @@ router.post("/register", registerMember);
 
 // Get all members
 router.get("/", getMembers);
-
-// Filter members
-router.get("/filter", filterMembers);
-
-// Search members by memberId, firstName, lastName, or email
-router.get("/search", searchMembers);
 
 // Get a specific member by ID
 router.get("/:id", getMemberById);
@@ -33,6 +24,4 @@ router.put("/:id", updateMember);
 // Delete a specific member by ID
 router.delete("/:id", deleteMember);
 
-router.put("/renew/:memberId", renewAndPayMembership);
-
-module.exports = router;
+export default router;

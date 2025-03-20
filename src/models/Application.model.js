@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const applicationSchema = new mongoose.Schema(
   {
@@ -23,15 +23,6 @@ const applicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    dob: {
-      type: Date,
-      required: true,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female"],
-      required: true,
-    },
     emergencyContact: {
       name: {
         type: String,
@@ -49,29 +40,36 @@ const applicationSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+      address: {
+        type: String,
+        required: true,
+      },
     },
-    additionalInfo: {
+    medicalInfo: {
       type: String,
-      default: "none",
+      default: "",
     },
-    membershipType: {
+    status: {
       type: String,
-      enum: ["basic", "premium"],
-      required: true,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
-    membershipPeriod: {
-      type: String,
-      enum: ["1 month", "3 months", "1 year"],
-      required: true,
-    },
-    membershipStartDate: {
-      type: Date,
-      required: true,
-    },
+    statusHistory: [
+      {
+        status: {
+          type: String,
+          enum: ["pending", "approved", "rejected"],
+        },
+        updatedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const Application = mongoose.model("Application", applicationSchema);
 
-module.exports = Application;
+export default Application;
