@@ -51,8 +51,47 @@ const memberSchema = new mongoose.Schema(
     },
     approvedAt: {
       type: Date,
-      default: Date.now,
+      required: true,
     },
+    membershipEndDate: {
+      type: Date,
+      required: false,
+    },
+    memberId: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    renew: {
+      type: Boolean,
+      default: false,
+    },
+    renewCount: {
+      type: Number,
+      default: 0,
+    },
+    extendDate: [
+      {
+        type: Date,
+      },
+    ],
+    payment: [
+      {
+        type: String,
+        enum: ["paid", "unpaid"],
+        default: "unpaid",
+      },
+    ],
+    paymentAmt: [
+      {
+        type: Number,
+      },
+    ],
+    paymentDate: [
+      {
+        type: Date,
+      },
+    ],
   },
   { timestamps: true }
 );
