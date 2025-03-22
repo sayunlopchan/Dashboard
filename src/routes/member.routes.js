@@ -3,11 +3,12 @@ const {
   registerMember,
   getMembers,
   getMemberById,
+  getMemberByMemberId,
   updateMember,
   deleteMember,
   filterMembers,
   searchMembers,
-  renewAndPayMembership
+  renewAndPayMembership,
 } = require("../controllers/member.controller.js");
 
 const router = express.Router();
@@ -26,6 +27,9 @@ router.get("/search", searchMembers);
 
 // Get a specific member by ID
 router.get("/:id", getMemberById);
+
+// Get a specific member by memberID
+router.get("/memberId/:memberId", getMemberByMemberId);
 
 // Update a specific member by ID
 router.put("/:id", updateMember);

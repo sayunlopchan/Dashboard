@@ -146,6 +146,24 @@ const getMemberById = asyncHandler(async (req, res) => {
   }
 });
 
+// Get member by memberId
+const getMemberByMemberId = asyncHandler(async (req, res) => {
+  try {
+    const member = await Member.findOne({ memberId: req.params.memberId });
+
+    if (member) {
+      res.status(200).json(member);
+    } else {
+      res.status(404).json({ error: "Member not found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      error: "An error occurred while fetching the member",
+      details: error.message,
+    });
+  }
+});
+
 // Update member by ID and recalculate membershipEndDate when needed
 const updateMember = asyncHandler(async (req, res) => {
   try {
@@ -418,6 +436,7 @@ module.exports = {
   registerMember,
   getMembers,
   getMemberById,
+  getMemberByMemberId,
   updateMember,
   deleteMember,
   filterMembers,

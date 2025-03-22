@@ -46,7 +46,7 @@ io.on("connection", (socket) => {
   // Listen for a "fetchMembers" event from the client.
   socket.on("fetchMembers", async () => {
     try {
-      // Import the Member model (adjust path as needed)
+      // Import the Member model
       const Member = require("./models/Member.model.js");
       const members = await Member.find({});
       // Send the fetched members back to the client via "membersData" event.

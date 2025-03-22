@@ -244,12 +244,19 @@ const approveApplication = asyncHandler(async (req, res) => {
     // Emit events to notify all connected clients
     const io = req.app.get("io");
     if (io) {
-      io.emit("newMember", member); // Emit new member event
+      // Fetch the updated list of members
+      const Member = require("../models/Member.model"); // Ensure correct path
+      const updatedMembers = await Member.find({});
+
+      // Emit the updated members data to all clients
+      io.emit("membersData", { members: updatedMembers });
+
+      // Existing events (optional, adjust as needed)
       io.emit("applicationApproved", {
         applicationId: application._id,
         member,
-      }); // Emit application approved event
-      io.emit("applicationRemoved", application._id); // Emit application removed event
+      });
+      io.emit("applicationRemoved", application._id);
     }
 
     res.status(201).json({
