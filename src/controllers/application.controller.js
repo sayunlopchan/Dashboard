@@ -196,7 +196,7 @@ const deleteApplication = asyncHandler(async (req, res) => {
   }
 });
 
-// Approve application and create a member with generated custom memberID
+// Approve application and create a member with generated custom memberID and membershipEndDate
 const approveApplication = asyncHandler(async (req, res) => {
   try {
     const application = await Application.findById(req.params.id);
@@ -217,6 +217,24 @@ const approveApplication = asyncHandler(async (req, res) => {
     // Generate the memberId
     const memberId = await generateUniqueId();
 
+    // Calculate membershipEndDate based on application data
+    const membershipStartDate = new Date(application.membershipStartDate);
+    let membershipEndDate = new Date(membershipStartDate);
+
+    switch (application.membershipPeriod) {
+      case "1 month":
+        membershipEndDate.setMonth(membershipEndDate.getMonth() + 1);
+        break;
+      case "3 months":
+        membershipEndDate.setMonth(membershipEndDate.getMonth() + 3);
+        break;
+      case "1 year":
+        membershipEndDate.setFullYear(membershipEndDate.getFullYear() + 1);
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid membership period" });
+    }
+
     // Create a new member from the application
     const member = await Member.create({
       firstName: application.firstName,
@@ -231,6 +249,7 @@ const approveApplication = asyncHandler(async (req, res) => {
       membershipType: application.membershipType,
       membershipPeriod: application.membershipPeriod,
       membershipStartDate: application.membershipStartDate,
+      membershipEndDate, // Add calculated end date
       memberId,
     });
 
@@ -250,8 +269,6 @@ const approveApplication = asyncHandler(async (req, res) => {
 
       // Emit the updated members data to all clients
       io.emit("membersData", { members: updatedMembers });
-
-      // Existing events (optional, adjust as needed)
       io.emit("applicationApproved", {
         applicationId: application._id,
         member,

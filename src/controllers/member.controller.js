@@ -2,7 +2,7 @@ const Member = require("../models/Member.model.js");
 const asyncHandler = require("express-async-handler");
 const generateUniqueId = require("../utils/idGenerator.js");
 
-// Register a new member with a default "unpaid" payment record
+// Register a new member
 const registerMember = asyncHandler(async (req, res) => {
   const {
     firstName,
@@ -32,19 +32,23 @@ const registerMember = asyncHandler(async (req, res) => {
     const startDate = new Date(membershipStartDate);
     const dobDate = new Date(dob);
 
-    let membershipEndDate;
-    if (membershipPeriod === "1 year") {
-      membershipEndDate = new Date(startDate);
-      membershipEndDate.setFullYear(startDate.getFullYear() + 1);
-    } else if (membershipPeriod === "6 months") {
-      membershipEndDate = new Date(startDate);
-      membershipEndDate.setMonth(startDate.getMonth() + 6);
-    } else if (membershipPeriod === "3 months") {
-      membershipEndDate = new Date(startDate);
-      membershipEndDate.setMonth(startDate.getMonth() + 3);
+    // Calculate membershipEndDate based on membershipPeriod
+    let membershipEndDate = new Date(startDate);
+    switch (membershipPeriod) {
+      case "1 month":
+        membershipEndDate.setMonth(membershipEndDate.getMonth() + 1);
+        break;
+      case "3 months":
+        membershipEndDate.setMonth(membershipEndDate.getMonth() + 3);
+        break;
+      case "1 year":
+        membershipEndDate.setFullYear(membershipEndDate.getFullYear() + 1);
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid membership period" });
     }
 
-    // Create the new member with a default payment record ("unpaid") and default amount 0
+    // Create the new member
     const member = await Member.create({
       firstName,
       lastName,
@@ -56,7 +60,6 @@ const registerMember = asyncHandler(async (req, res) => {
       emergencyContact: {
         name: emergencyContact?.name,
         relationship: emergencyContact?.relationship,
-        email: emergencyContact?.email,
         phoneNumber: emergencyContact?.phoneNumber,
       },
       additionalInfo: additionalInfo || "none",
@@ -65,22 +68,13 @@ const registerMember = asyncHandler(async (req, res) => {
       memberId,
       membershipStartDate: startDate,
       membershipEndDate,
-      payment: ["unpaid"],
-      paymentAmt: [0],
     });
 
-    // In member.controller.js - registerMember function
-    if (member) {
-      // Fetch the updated list of members
-      const updatedMembers = await Member.find({});
-      // Emit the updated list to all clients
-      const io = req.app.get("io");
-      io.emit("membersData", { members: updatedMembers });
+    // Emit real-time update
+    const io = req.app.get("io");
+    io.emit("membersData", { members: await Member.find({}) });
 
-      return res.status(201).json(member);
-    } else {
-      return res.status(400).json({ error: "Invalid member data" });
-    }
+    return res.status(201).json(member);
   } catch (error) {
     console.error("Error registering member:", error);
     return res.status(500).json({
@@ -101,7 +95,7 @@ const getMembers = asyncHandler(async (req, res) => {
   res.json(members);
 });
 
-// Search members by name, memberId, or email
+// Search members by first/laclearst name, name, memberId, or email
 const searchMembers = asyncHandler(async (req, res) => {
   const { query } = req.query;
 
@@ -112,10 +106,24 @@ const searchMembers = asyncHandler(async (req, res) => {
   try {
     const members = await Member.find({
       $or: [
+        // Match if firstName contains the query
         { firstName: { $regex: query, $options: "i" } },
+        // Match if lastName contains the query
         { lastName: { $regex: query, $options: "i" } },
-        { memberId: { $regex: query, $options: "i" } },
+        // Match if email contains the query
         { email: { $regex: query, $options: "i" } },
+        // Match if memberId contains the query
+        { memberId: { $regex: query, $options: "i" } },
+        // Match if the concatenated full name (firstName + " " + lastName) contains the query
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $concat: ["$firstName", " ", "$lastName"] },
+              regex: query,
+              options: "i",
+            },
+          },
+        },
       ],
     });
 
@@ -301,17 +309,10 @@ const filterMembers = asyncHandler(async (req, res) => {
   }
 });
 
-// Renew (Extend) Membership and Process Payment
+// Renew Membership TYPE/PERIOD
 const renewAndPayMembership = asyncHandler(async (req, res) => {
   const { memberId } = req.params;
-  const { membershipPeriod, paymentAmount } = req.body;
-
-  // Validate paymentAmount
-  if (paymentAmount == null || typeof paymentAmount !== "number") {
-    return res
-      .status(400)
-      .json({ error: "Payment amount must be provided as a number" });
-  }
+  const { membershipPeriod, membershipType } = req.body;
 
   try {
     const member = await Member.findOne({ memberId });
@@ -319,114 +320,63 @@ const renewAndPayMembership = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "Member not found" });
     }
 
-    // Use membership period from the database if not provided in req.body
+    // Validate inputs
     const validPeriods = ["1 month", "3 months", "1 year"];
-    let period = membershipPeriod || member.membershipPeriod;
+    const validTypes = ["basic", "premium"];
 
-    if (!validPeriods.includes(period)) {
-      return res
-        .status(400)
-        .json({ error: "Invalid membership period selected" });
-    }
-    console.log("Before: ", member.membershipPeriod);
-    // Update the membershipPeriod in the database if provided
-    if (membershipPeriod) {
-      member.membershipPeriod = membershipPeriod;
-    }
-    console.log("After: ", member.membershipPeriod);
-    // Initialize payment arrays if needed
-    member.payment = member.payment || [];
-    member.paymentAmt = member.paymentAmt || [];
-    member.paymentDate = member.paymentDate || [];
+    // Always track the current membership type before updating it
+    member.membershipTypeHistory.push(member.membershipType);
+    member.membershipType = membershipType || member.membershipType;
 
-    // Remove any existing unpaid payment before processing
-    if (
-      member.payment.length > 0 &&
-      member.payment[member.payment.length - 1] === "unpaid"
-    ) {
-      member.payment.pop();
-      member.paymentAmt.pop();
-      member.paymentDate.pop();
+    // Always track the current membership period before updating it
+    member.membershipPeriodHistory.push(member.membershipPeriod);
+    member.membershipPeriod = membershipPeriod || member.membershipPeriod;
+
+    // Validate membership period
+    if (!validPeriods.includes(member.membershipPeriod)) {
+      return res.status(400).json({ error: "Invalid membership period" });
     }
 
-    // Process Payment Entry
-    if (paymentAmount > 0) {
-      member.payment.push("paid");
-      member.paymentAmt.push(paymentAmount);
-      member.paymentDate.push(new Date());
-    } else {
-      member.payment.push("unpaid");
-      member.paymentAmt.push(0);
-      member.paymentDate.push(new Date());
+    // Calculate new end date
+    let baseDate = new Date(member.membershipEndDate);
+    if (baseDate < new Date()) {
+      baseDate = new Date(); // If expired, start from now
     }
 
-    // Determine if this is the first activation (no membershipEndDate exists)
-    const isFirstActivation = !member.membershipEndDate;
-
-    if (isFirstActivation) {
-      // First Payment: Create membershipEndDate based on provided period (or stored period)
-      let baseDate =
-        member.membershipStartDate &&
-        new Date(member.membershipStartDate) > new Date()
-          ? new Date(member.membershipStartDate)
-          : new Date();
-
-      let newEndDate = new Date(baseDate);
-      switch (period) {
-        case "1 month":
-          newEndDate.setMonth(newEndDate.getMonth() + 1);
-          break;
-        case "3 months":
-          newEndDate.setMonth(newEndDate.getMonth() + 3);
-          break;
-        case "1 year":
-          newEndDate.setFullYear(newEndDate.getFullYear() + 1);
-          break;
-      }
-      member.membershipEndDate = newEndDate;
-      // Do NOT update renewal fields on first activation.
-    } else {
-      // Renewal Payment: Extend the current membershipEndDate.
-      let baseDate = new Date(member.membershipEndDate);
-      if (baseDate < new Date()) {
-        baseDate = new Date(); // if expired, start from now
-      }
-      let newEndDate = new Date(baseDate);
-      switch (period) {
-        case "1 month":
-          newEndDate.setMonth(newEndDate.getMonth() + 1);
-          break;
-        case "3 months":
-          newEndDate.setMonth(newEndDate.getMonth() + 3);
-          break;
-        case "1 year":
-          newEndDate.setFullYear(newEndDate.getFullYear() + 1);
-          break;
-      }
-      member.membershipEndDate = newEndDate;
-      member.renewCount = (member.renewCount || 0) + 1;
-      member.renew = true;
-      member.extendDate = [...(member.extendDate || []), new Date()];
+    const newEndDate = new Date(baseDate);
+    switch (member.membershipPeriod) {
+      case "1 month":
+        newEndDate.setMonth(newEndDate.getMonth() + 1);
+        break;
+      case "3 months":
+        newEndDate.setMonth(newEndDate.getMonth() + 3);
+        break;
+      case "1 year":
+        newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+        break;
     }
+
+    // Update membership details
+    member.membershipEndDate = newEndDate;
+    member.renewCount = (member.renewCount || 0) + 1;
+    member.renew = true;
+    member.renewDate = [...(member.renewDate || []), new Date()];
 
     await member.save();
 
-    // Fetch the updated list of members
-    const updatedMembers = await Member.find({});
-
-    // Emit update event
+    // Emit real-time update
     const io = req.app.get("io");
-    io.emit("membersData", { members: updatedMembers });
+    io.emit("membersData", { members: await Member.find({}) });
 
-    const message = isFirstActivation
-      ? "Payment processed successfully. Membership activated."
-      : `Payment processed successfully. Membership extended until ${member.membershipEndDate.toISOString()}`;
-
-    return res.status(200).json({ message, member });
+    return res.status(200).json({
+      message: `Membership extended until ${newEndDate.toISOString()}`,
+      member,
+      typeHistory: member.membershipTypeHistory,
+      periodHistory: member.membershipPeriodHistory,
+    });
   } catch (error) {
     return res.status(500).json({
-      error:
-        "An error occurred while processing payment and updating membership.",
+      error: "An error occurred while renewing membership",
       details: error.message,
     });
   }

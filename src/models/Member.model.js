@@ -43,10 +43,6 @@ const memberSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      email: {
-        type: String,
-        required: true,
-      },
       phoneNumber: {
         type: String,
         required: true,
@@ -61,10 +57,20 @@ const memberSchema = new mongoose.Schema(
       required: true,
       enum: ["basic", "premium"],
     },
+    membershipTypeHistory: {
+      type: [String],
+      enum: ["basic", "premium"],
+      default: [],
+    },
     membershipPeriod: {
       type: String,
       required: true,
       enum: ["1 month", "3 months", "1 year"],
+    },
+    membershipPeriodHistory: {
+      type: [String],
+      enum: ["1 month", "3 months", "1 year"],
+      default: [],
     },
     membershipStartDate: {
       type: Date,
@@ -87,24 +93,7 @@ const memberSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    extendDate: [
-      {
-        type: Date,
-      },
-    ],
-    payment: [
-      {
-        type: String,
-        enum: ["paid", "unpaid"],
-        default: "unpaid",
-      },
-    ],
-    paymentAmt: [
-      {
-        type: Number,
-      },
-    ],
-    paymentDate: [
+    renewDate: [
       {
         type: Date,
       },
