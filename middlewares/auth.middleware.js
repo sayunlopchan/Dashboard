@@ -18,7 +18,7 @@ const authenticate = async (req, res, next) => {
       return res.status(401).redirect("/admin/pages/unauthorized.html");
     }
 
-    req.user = user; // Attach full user object
+    req.user = user;
     next();
   } catch (error) {
     console.error("Auth error:", error);

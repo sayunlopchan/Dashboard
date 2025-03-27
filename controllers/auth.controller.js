@@ -98,7 +98,7 @@ const verifyToken = async (req, res) => {
 const logout = (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
-    secure: false, // Change to true in production with HTTPS
+    secure: true, // Change to true in production with HTTPS
     sameSite: "lax",
     expires: new Date(0), // Expire immediately
   });
