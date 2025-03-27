@@ -28,19 +28,16 @@ const server = http.createServer(app);
 const io = initializeSocket(server);
 
 // Enable CORS for Express routes
-// const allowedOrigins = [
-//   "https://gym-website-git-norevenue-sayunlopchans-projects.vercel.app/",
-// ];
+const allowedOrigins = [
+  "https://gym-website-git-norevenue-sayunlopchans-projects.vercel.app",
+];
 
-// app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//   })
-// );
-
-// for all right now
-app.use(cors());
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 // Middlewares
 app.use(express.json());
