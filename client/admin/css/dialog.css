@@ -1,0 +1,77 @@
+/* Dialog backdrop styling */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+/* menu backdrop styling gor hamburger menu */
+.menu-backdrop {
+  display: none;
+}
+
+.menu-backdrop.active {
+  display: block;
+}
+
+/* unauthorized */
+.unauthorized-dialog-backdrop {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+
+}
+
+.unauthorized-dialog-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* confirmation */
+.confirmation-dialog-backdrop {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+
+}
+
+.confirmation-dialog-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+/* add member */
+.add-member-dialog-backdrop {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.add-member-dialog-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* add renew */
+.add-renew-dialog-backdrop {
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.add-renew-dialog-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}

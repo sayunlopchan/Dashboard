@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/client/admin/css/main.css" />
+    <link rel="stylesheet" href="/client/admin/css/member.css" />
+    <title>Members</title>
+    <script defer src="/client/admin/js/main.js"></script>
+    <script defer src="/client/admin/js/setting-menu.js"></script>
+    <script defer src="/client/admin/js/toggle.js"></script>
+    <script defer src="/client/admin/js/member.js"></script>
+  </head>
+
+  <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- dialog container-->
+    <div class="unauthorized-dialog-backdrop backdrop">
+      <div class="unauthorized-dialog-box">
+        <h2>Unauthorized</h2>
+        <p>You need to be logged in to access the page.</p>
+        <button id="closeDialogBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- Logout confirmation dialog -->
+    <div class="confirmation-dialog-backdrop backdrop">
+      <div class="logout-confirm-dialog-box">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to logout?</p>
+        <div class="dialog-buttons">
+          <button id="confirmLogoutBtn">Confirm</button>
+          <button id="cancelLogoutBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings menu -->
+    <div class="settings-menu">
+      <i class="fa-solid fa-gear"></i>
+      <div class="setting-menu-wrapper">
+        <ul>
+          <li id="dashboard-li">Dashboard</li>
+          <li id="member-li">Member</li>
+          <li id="application-li">Application</li>
+          <li id="auth-button">Login</li>
+        </ul>
+      </div>
+    </div>
+
+    <header>
+      <!-- Top Bar -->
+      <div class="the-container">
+        <div class="top-bar">
+          <!-- SEARCH -->
+          <div class="search-container">
+            <div class="search-wrapper">
+              <input class="nav-input" type="text" id="searchInput" placeholder="search member" />
+              <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+            </div>
+            <div id="resultsContainer" class="resultsContainer">
+              <ul id="resultsList">
+                <!-- search data -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- NOTIFACTION -->
+          <div class="notification">
+            <div class="notification-count" id="notiCount">0</div>
+            <i class="fa-solid fa-bell" id="notiBell"></i>
+            <div class="notification-modal" id="notiModal">
+              <h4>Notifications</h4>
+              <div class="noti-filter-container">
+                <button class="noti-filter" onclick="markAllAsRead()">Mark all as read</button>
+
+              </div>
+              <div id="notificationData">
+                <div class="noNoti-Data">
+                  <p>No Notification</p>
+                </div>
+              </div>
+              <div class="more-noti">
+                <a href="/admin/pages/notification.html">See more</a>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      <!-- Top Bar -->
+    </header>
+
+    <main>
+      <div class="the-container">
+        <section class="memberlist-filter">
+          <div class="filter-box">
+            <div class="filter-header">
+              <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-filter">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Filter Members
+              </h2>
+            </div>
+            <div class="filter-group">
+              <div class="filter-item">
+                <select id="filterGender">
+                  <option value="">All Genders</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <select id="filterMembershipType">
+                  <option value="">All Memberships</option>
+                  <option value="basic">Basic</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="memberlist">
+          <div class="memberlist-header">
+            <h1>Members</h1>
+            <div class="search-container">
+              <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <!-- Use a unique ID for this search input -->
+              <input type="text" class="search-input" id="memberSearchInput" placeholder="Search members..." />
+            </div>
+          </div>
+          <div id="membersContainer">
+            <!-- Member cards will be inserted here -->
+          </div>
+        </section>
+
+        <div id="memberTemplate" class="member-card" style="display:none;">
+          <div class="member-data">
+            <h4 class="member-fullname">FULLNAME</h4>
+            <p class="member-email">HELLOWORLD@example.com</p>
+            <p class="member-id">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-hash">
+                <line x1="4" y1="9" x2="20" y2="9"></line>
+                <line x1="4" y1="15" x2="20" y2="15"></line>
+                <line x1="10" y1="3" x2="8" y2="21"></line>
+                <line x1="16" y1="3" x2="14" y2="21"></line>
+              </svg>
+              <span>MEMBER ID</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </body>
+
+</html>

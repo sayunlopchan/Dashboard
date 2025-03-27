@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- styles -->
+    <link rel="stylesheet" href="/client/admin/css/main.css">
+    <link rel="stylesheet" href="/client/admin/css/detail.css">
+
+
+    <title>Member Details - XXXX XXXX</title>
+
+    <!-- scripts -->
+    <script defer src="/client/admin/js/main.js"></script>
+    <script defer src="/client/admin/js/member-detail.js"></script>
+    <script defer src="/client/admin/js/toggle.js"></script>
+    <script defer src="/client/admin/js/setting-menu.js"></script>
+  </head>
+
+  <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- dialog container-->
+    <div class="unauthorized-dialog-backdrop backdrop">
+      <div class="unauthorized-dialog-box">
+        <h2>Unauthorized</h2>
+        <p>You need to be logged in to access the page.</p>
+        <button id="closeDialogBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- Logout confirmation dialog -->
+    <div class="confirmation-dialog-backdrop backdrop">
+      <div class="logout-confirm-dialog-box">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to logout?</p>
+        <div class="dialog-buttons">
+          <button id="confirmLogoutBtn">Confirm</button>
+          <button id="cancelLogoutBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings menu -->
+    <div class="settings-menu">
+      <i class="fa-solid fa-gear"></i>
+      <div class="setting-menu-wrapper">
+        <ul>
+          <li id="dashboard-li">Dashboard</li>
+          <li id="member-li">Member</li>
+          <li id="application-li">Application</li>
+          <li id="auth-button">Login</li>
+        </ul>
+      </div>
+    </div>
+
+    <header>
+      <!-- Top Bar -->
+      <div class="the-container">
+        <div class="top-bar">
+          <!-- SEARCH -->
+          <div class="search-container">
+            <div class="search-wrapper">
+              <input class="nav-input" type="text" id="searchInput" placeholder="search member" />
+              <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i>
+            </div>
+            <div id="resultsContainer" class="resultsContainer">
+              <ul id="resultsList">
+                <!-- search data -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- NOTIFACTION -->
+          <div class="notification">
+            <div class="notification-count" id="notiCount">0</div>
+            <i class="fa-solid fa-bell" id="notiBell"></i>
+            <div class="notification-modal" id="notiModal">
+              <h4>Notifications</h4>
+              <div class="noti-filter-container">
+                <button class="noti-filter" onclick="markAllAsRead()">Mark all as read</button>
+
+              </div>
+              <div id="notificationData">
+                <div class="noNoti-Data">
+                  <p>No Notification</p>
+                </div>
+              </div>
+              <div class="more-noti">
+                <a href="/admin/pages/notification.html">See more</a>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      <!-- Top Bar -->
+    </header>
+
+    <main class="detail-main">
+      <div class="container">
+        <!-- Header Section -->
+        <div class="profile-header">
+          <div class="header-content">
+            <h1 class="member-name">Loading...</h1>
+            <div class="div-wrapper">
+              <div class="member-id">Member ID: Loading...</div>
+              <div class="member-address">Address: Loading...</div>
+            </div>
+          </div>
+          <div class="status-badge premium">Loading...</div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+
+          <!-- Personal Info Card -->
+          <section class="card personal-info">
+            <h2 class="card-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+              </svg>
+              Personal Information
+            </h2>
+            <div class="info-grid">
+
+              <div class="info-item">
+                <label>Email</label>
+                <p class="email-value">Loading...</p>
+              </div>
+
+              <div class="info-item">
+                <label>DOB</label>
+                <p class="dob-value">Loading...</p>
+              </div>
+
+              <div class="info-item">
+                <label>Phone Number</label>
+                <p class="phoneNumber-value">Loading...</p>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- Emergency Contact Card -->
+          <section class="card emergency">
+            <h2 class="card-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm0-10h2v6h-2z" />
+              </svg>
+              Emergency Contact
+            </h2>
+            <div class="info-grid">
+
+              <div class="info-item">
+                <label>Name</label>
+                <p class="name-value">Loading...</p>
+              </div>
+
+              <div class="info-item">
+                <label>relationship</label>
+                <p class="relationship-value">Loading...</p>
+              </div>
+
+              <div class="info-item">
+                <label>Number</label>
+                <p class="number-value">Loading...</p>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- Membership Details Card -->
+          <section class="card membership">
+            <h2 class="card-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z" />
+              </svg>
+              Membership Details
+            </h2>
+            <div class="info-grid">
+
+              <div class="info-item">
+                <label>Renewal</label>
+                <p class="renewal-value">Loading...</p>
+                <!-- show active text if renew is true in database not active is false -->
+              </div>
+
+              <div class="info-item">
+                <label>Start date</label>
+                <p class="start-value">Loading...</p>
+              </div>
+
+              <div class="info-item">
+                <label>End date</label>
+                <p class="end-value">Loading...</p>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+    <footer>
+      <button id="delete_member">Delete Member</button>
+    </footer>
+  </body>
+
+</html>

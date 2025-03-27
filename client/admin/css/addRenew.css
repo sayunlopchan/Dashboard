@@ -1,0 +1,185 @@
+.add-renew-box {
+  position: relative;
+  background-color: #fff;
+  padding: 40px 30px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 800px;
+  margin: 0 auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  position: relative;
+  pointer-events: none;
+}
+
+.add-renew-box.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+
+.columns-container {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+
+
+/* RESULT */
+
+.result-card {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 10px;
+  background-color: gray;
+}
+
+/* Input and Select Styling */
+.form-input-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.form-input-group label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+  color: #2d3748;
+  font-size: 0.925rem;
+}
+
+.add-renew-box input[type="text"],
+.add-renew-box select {
+  width: 100%;
+  padding: 0.8rem 1.25rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: #4a5568;
+}
+
+
+.add-renew-box input[type="text"]::placeholder {
+  color: #a0aec0;
+}
+
+
+/* Error Styling */
+.error-message {
+  padding: 1rem;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 0.5rem;
+  color: #c53030;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.error-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* Button Styling */
+.submit-btn {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+}
+
+
+.submit-btn {
+  transition: transform 0.2s ease;
+}
+
+.submit-btn:active {
+  transform: scale(0.9);
+}
+
+/* Close Button */
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.close-button:hover {
+  background: #e2e8f0;
+  transform: rotate(90deg);
+}
+
+.history-section {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.history-item {
+  display: inline-block;
+  margin: 0 0.25rem;
+  color: rebeccapurple;
+  padding: 0.25rem 0.5rem;
+  background: #e9ecef;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .add-renew-box {
+    padding: 1.5rem;
+    margin: 1rem;
+    width: auto;
+  }
+
+  .columns-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .member-info-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}

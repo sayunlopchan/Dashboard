@@ -1,0 +1,9 @@
+/* Admin styles */
+@import url('loading.css');
+@import url('style.css');
+@import url('nav.css');
+@import url('confirm.css');
+@import url('unauthorized.css');
+@import url('analytics.css');
+@import url('dialog.css');
+@import url('detail.css');

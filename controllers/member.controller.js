@@ -241,16 +241,19 @@ const updateMember = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete member by ID
+// Delete member by MemberID
 const deleteMember = asyncHandler(async (req, res) => {
   try {
-    const member = await Member.findById(req.params.id);
+    // Search for the member using the custom 'memberId' field instead of '_id'
+    const member = await Member.findOne({ memberId: req.params.memberId });
 
     if (member) {
-      await Member.deleteOne({ _id: member._id });
-      res
-        .status(200)
-        .json({ message: "Member successfully removed", id: member._id });
+      // Delete using the custom 'memberId'
+      await Member.deleteOne({ memberId: member.memberId });
+      res.status(200).json({
+        message: "Member successfully removed",
+        memberId: member.memberId,
+      });
     } else {
       res.status(404).json({ error: "Member not found" });
     }

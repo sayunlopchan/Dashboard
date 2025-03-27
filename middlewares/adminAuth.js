@@ -1,4 +1,3 @@
-// middleware/adminAuth.js
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model.js");
 
@@ -14,7 +13,7 @@ const adminAuth = async (req, res, next) => {
     if (!user || !user.admin) {
       return res.status(403).json({ message: "Access denied. Admins only." });
     }
-    // Optionally, attach the user object to the request for later use
+
     req.user = user;
     next();
   } catch (error) {

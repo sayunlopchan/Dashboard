@@ -33,18 +33,14 @@ const signup = async (req, res) => {
 // Login with admin check
 const login = async (req, res) => {
   try {
-    // Validate the request body against the login schema
     const { error } = loginSchema.validate(req.body);
     if (error)
       return res.status(400).json({ message: error.details[0].message });
 
     const { email, password } = req.body;
-
-    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    // Compare the plain text password with the hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
@@ -54,18 +50,24 @@ const login = async (req, res) => {
       return res.status(403).json({ message: "Access denied. Admin only." });
     }
 
-    // Generate a JWT for the authenticated user
+    // Generate JWT
     const token = jwt.sign(
       { id: user._id, admin: user.admin },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
+      { expiresIn: "1h" }
     );
 
-    res.status(200).json({ token });
+    // Set token in HTTP cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // For development over HTTP
+      sameSite: "lax",
+      maxAge: 3600000,
+    });
+
+    res.status(200).json({ message: "Login successful" });
   } catch (error) {
-    console.error(error); // Log error for debugging
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -73,13 +75,13 @@ const login = async (req, res) => {
 // Verify token and admin status
 const verifyToken = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader)
+    const token = req.cookies.token; // Get token from cookie
+    if (!token) {
       return res
         .status(401)
         .json({ valid: false, message: "No token provided" });
+    }
 
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
     if (!user || !user.admin) {
@@ -92,4 +94,15 @@ const verifyToken = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, verifyToken };
+// Logout
+const logout = (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    secure: false, // Change to true in production with HTTPS
+    sameSite: "lax",
+    expires: new Date(0), // Expire immediately
+  });
+  res.status(200).json({ message: "Logout successful" });
+};
+
+module.exports = { signup, login, verifyToken, logout };

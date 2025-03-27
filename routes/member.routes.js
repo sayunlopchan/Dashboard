@@ -35,7 +35,7 @@ router.get("/memberId/:memberId", getMemberByMemberId);
 router.put("/:id", updateMember);
 
 // Delete a specific member by ID
-router.delete("/:id", deleteMember);
+router.delete("/:memberId", deleteMember);
 
 router.put("/renew/:memberId", renewAndPayMembership);
 
