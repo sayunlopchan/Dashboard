@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
         authButton.textContent = "Login";
         authButton.onclick = showLoginDialog;
         hideLogoutDialog();
-        window.location.href = "http://localhost:5501"; // Redirect to home after logout
+        window.location.href = "/"; // Redirect to home after logout
       }
     } catch (error) {
       console.error("Logout failed:", error);

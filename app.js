@@ -29,7 +29,6 @@ const io = initializeSocket(server);
 
 // Enable CORS for Express routes
 const allowedOrigins = [
-  "http://localhost:5501",
   "https://gym-website-git-norevenue-sayunlopchans-projects.vercel.app/",
 ];
 
