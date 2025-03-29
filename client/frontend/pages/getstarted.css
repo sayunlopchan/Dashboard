@@ -1,0 +1,263 @@
+.heading {
+  text-align: center;
+  margin: 40px 0;
+}
+
+.progress-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: min(100%, 800px);
+  margin: auto;
+  position: sticky;
+  top: 90px;
+  background: var(--light);
+  z-index: 100;
+  padding: 10px 0;
+}
+
+.progress-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--light-dark);
+  text-align: center;
+}
+
+
+.progress-num {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  border: 1px solid var(--light-gray);
+  background-color: var(--light);
+  color: initial;
+  transition: all 0.3s ease;
+}
+
+.progress-num.active {
+  background-color: var(--primary-color);
+  color: var(--light);
+}
+
+
+.line {
+  width: 10%;
+  height: 2px;
+  background-color: var(--light-gray);
+  transition: background-color 0.3s ease;
+}
+
+.line.active {
+  background-color: var(--primary-color);
+}
+
+/* form */
+.form-container {
+  width: min(100%, 800px);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.form-container form section {
+  margin-top: 50px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* spaning */
+.form-container form section h2 {
+  grid-column: span 2;
+}
+
+.container-1,
+.container-2 {
+  grid-column: span 1;
+}
+
+.container-3,
+.container-4,
+.container-5,
+.container-6 {
+  grid-column: span 2;
+}
+
+/* spaning */
+
+.form-container form section .container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-container form section label {
+  font-size: var(--font-sm);
+}
+
+.form-container form input,
+textarea,
+select {
+  border: none;
+  outline: none;
+  padding: 15px;
+  background-color: whitesmoke;
+  transition: outline 0.1s ease;
+}
+
+.form-container form input[type="radio"] {
+  padding: 0;
+}
+
+.form-container form input:focus,
+textarea:focus {
+  outline: 2px solid var(--primary-color);
+}
+
+
+
+
+.form-container form input[type="radio"]:focus {
+  outline: none;
+}
+
+input[type="radio"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  border-radius: 50%;
+}
+
+input[type="radio"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+}
+
+input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+}
+
+.radio-group {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.btn-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heading h1 {
+    font-size: var(--font-md);
+  }
+
+  .heading p {
+    font-size: var(--font-xs);
+  }
+
+  .progress-num {
+    height: 20px;
+    width: 20px;
+    border: 1px solid var(--light-gray);
+    font-size: var(--font-sm);
+  }
+
+  .progress-text {
+    font-size: var(--font-sm);
+  }
+
+  .line {
+    width: 5%;
+    height: 2px;
+    background-color: var(--light-gray);
+  }
+
+  .form-section {
+    grid-template-columns: 1fr;
+  }
+
+  .form-container form input,
+  textarea {
+    padding: 12px;
+  }
+
+  h1,
+  h2 {
+    font-size: var(--font-lg);
+  }
+
+  .container-1,
+  .container-2,
+  .container-3,
+  .container-4,
+  .container-5,
+  .container-6 {
+    grid-column: span 2;
+  }
+}
+
+/* Additional small-screen adjustments */
+@media (max-width: 480px) {
+
+
+  .progress-num {
+    height: 20px;
+    width: 20px;
+    border: 1px solid var(--light-gray);
+    font-size: var(--font-xs);
+  }
+
+  .progress-text {
+    font-size: var(--font-xxs);
+  }
+
+  .contact-container {
+    margin: 20px;
+  }
+
+  form input,
+  textarea {
+    padding: 10px;
+  }
+
+  form label {
+    font-size: var(--font-xs);
+  }
+
+  h1,
+  h2 {
+    font-size: var(--font-md);
+  }
+}

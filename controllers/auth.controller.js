@@ -57,19 +57,38 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Set token in HTTP cookie
+    // Set token in HTTP cookie (production)
     res.cookie("token", token, {
-      httpOnly: true, // Prevents client-side access to the cookie
-      secure: process.env.NODE_ENV === "production", // Use Secure cookies only in production (over HTTPS)
-      sameSite: "None", // Allow the cookie to be sent with cross-origin requests
-      maxAge: 3600000, // Set cookie expiration (1 hour)
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: 3600000, // cookie expiration in (1 hour)
     });
+
+    // Set token in HTTP cookie (Development)
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "Lax",
+    //   maxAge: 3600000, // 1 hour expiration
+    // });
 
     res.status(200).json({ message: "Login successful" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+// Logout
+const logout = (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    secure: true, // Change to true in production with HTTPS
+    sameSite: "lax",
+    expires: new Date(0), // Expire immediately
+  });
+  res.status(200).json({ message: "Logout successful" });
 };
 
 // Verify token and admin status
@@ -92,17 +111,6 @@ const verifyToken = async (req, res) => {
     console.error("Token verification failed:", error);
     res.status(401).json({ valid: false, message: "Invalid token" });
   }
-};
-
-// Logout
-const logout = (req, res) => {
-  res.cookie("token", "", {
-    httpOnly: true,
-    secure: true, // Change to true in production with HTTPS
-    sameSite: "lax",
-    expires: new Date(0), // Expire immediately
-  });
-  res.status(200).json({ message: "Logout successful" });
 };
 
 module.exports = { signup, login, verifyToken, logout };

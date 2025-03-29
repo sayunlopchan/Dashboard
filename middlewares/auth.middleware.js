@@ -6,7 +6,7 @@ const User = require("../models/User.model.js");
 const authenticate = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
-    return res.status(401).redirect("/admin/pages/unauthorized.html");
+    return res.status(401).redirect("/admin/unauthorized");
   }
 
   try {
@@ -15,14 +15,14 @@ const authenticate = async (req, res, next) => {
     // Fetch user from the database
     const user = await User.findById(decoded.id);
     if (!user) {
-      return res.status(401).redirect("/admin/pages/unauthorized.html");
+      return res.status(401).redirect("/admin/unauthorized");
     }
 
     req.user = user;
     next();
   } catch (error) {
     console.error("Auth error:", error);
-    return res.status(401).redirect("/admin/pages/unauthorized.html");
+    return res.status(401).redirect("/admin/unauthorized");
   }
 };
 
@@ -31,7 +31,7 @@ const checkAdmin = (req, res, next) => {
   if (req.user && req.user.admin) {
     next();
   } else {
-    return res.status(403).redirect("/admin/pages/unauthorized.html");
+    return res.status(403).redirect("/admin/unauthorized");
   }
 };
 

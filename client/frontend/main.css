@@ -1,0 +1,16 @@
+/* General styles */
+@import url('/frontend/style.css');
+@import url('/frontend/css/loading.css');
+
+/* User styles */
+@import url('/frontend/css/unauthorized.css');
+@import url('/frontend/css/confirm.css');
+@import url('/frontend/css/dialog.css');
+
+
+
+/* page */
+@import url('/frontend/css/header.css');
+@import url('/frontend/css/footer.css');
+@import url('/frontend/css/buttons.css');
+@import url('/frontend/css/form.css');

@@ -1,0 +1,171 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+
+/* External font-awesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css');
+
+/* External Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+
+:root {
+  --primary-color: #ffa500;
+  --background: #fff9f5;
+  --highlight-color-1: #3517dd86;
+  --highlight-color-2: #503cc7;
+
+  --heading-color: #181717;
+  --para-color: #6c6c6c;
+
+  --light: #fff;
+  --text-light-gray: #cacaca;
+  --text-dark-gray: #6c6c6c;
+
+  --heading-font: "Nunito Sans";
+  --para-font: "Poppins";
+
+  --light-dark: #1c1c1c;
+  --light-gray: #cacaca;
+
+  --footer-bg: #0f0d0b;
+
+  --font-xxs: 10px;
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-sm1: 16px;
+  --font-md: 18px;
+  --font-lg: 24px;
+  --font-xlg: 26px;
+  --font-xl: 38px;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  list-style: none;
+  box-sizing: border-box;
+  font-family: var(--para-font);
+}
+
+button,
+a {
+  outline: none;
+  /* Removes the focus ring */
+  -webkit-tap-highlight-color: transparent;
+  /* Removes tap highlight on mobile devices */
+}
+
+button:focus,
+a:focus,
+input:focus {
+  outline: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+a:is(:link, :active, :visited).active {
+  background-color: orange;
+  color: white;
+  padding: 5px 15px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--heading-color);
+  font-family: var(--heading-font);
+}
+
+p {
+  color: var(--para-color);
+  font-family: var(--para-font);
+}
+
+
+.the-container {
+  width: 90%;
+  max-width: 1780px;
+  min-width: 300px;
+  margin: auto;
+}
+
+
+.settings-menu {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 200;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.settings-menu .fa-gear {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: var(--light);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+
+.setting-menu-wrapper {
+  width: 200px;
+  background: var(--light);
+  border-radius: 12px;
+  position: absolute;
+  bottom: calc(100% + 0px);
+  left: 85%;
+  transform: translateX(-50%) scale(0);
+  transform-origin: bottom center;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  visibility: hidden;
+  padding: 15px;
+}
+
+.settings-menu.active .setting-menu-wrapper {
+  transform: translateX(0%) scale(1);
+  opacity: 1;
+  visibility: visible;
+}
+
+.setting-menu-wrapper ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: var(--dark);
+}
+
+.setting-menu-wrapper li {
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.setting-menu-wrapper li:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateX(4px);
+}
+
+@media (min-width:1200px) {
+  .settings-menu {
+    width: 50px;
+    height: 50px;
+  }
+
+  .settings-menu>i {
+    font-size: 30px;
+  }
+}

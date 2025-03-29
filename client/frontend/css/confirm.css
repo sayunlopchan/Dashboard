@@ -1,0 +1,68 @@
+/* Logout Confirmation Dialog Box */
+.logout-confirm-dialog-box {
+  background: #fff;
+  width: min(90%, 400px);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  visibility: visible;
+  display: block;
+  pointer-events: none;
+  transform: translateY(-20px);
+  transition: all 0.3s ease-in-out;
+}
+
+.logout-confirm-dialog-box.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.logout-confirm-dialog-box h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.logout-confirm-dialog-box p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.logout-confirm-dialog-box .dialog-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.logout-confirm-dialog-box button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+#confirmLogoutBtn {
+  background: #ff4d4d;
+  color: #fff;
+}
+
+#confirmLogoutBtn:hover {
+  background: #e60000;
+}
+
+#cancelLogoutBtn {
+  background: #ccc;
+  color: #333;
+}
+
+#cancelLogoutBtn:hover {
+  background: #b3b3b3;
+}

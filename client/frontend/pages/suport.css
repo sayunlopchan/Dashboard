@@ -1,0 +1,291 @@
+.thumbnail {
+  height: 360px;
+  background-image: url(/frontend/assets/textures/support.jpg);
+  background-position: top;
+  background-size: cover;
+  object-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbnail h1 {
+  color: white;
+}
+
+.qf {
+  font-size: var(--font-lg);
+}
+
+.center-box {
+  width: 60%;
+  padding: 5px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.center-box h4 {
+  font-size: var(--font-md);
+}
+
+.center-box p {
+  font-size: var(--font-xs);
+  color: black;
+}
+
+.qf {
+  text-align: center;
+  margin: 40px 0px;
+}
+
+.support-card-wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 160px);
+  gap: 20px;
+  justify-content: center;
+  align-content: center;
+}
+
+.support-card {
+  width: 160px;
+  height: 160px;
+  text-align: center;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid gainsboro;
+  transition: box-shadow 0.3s ease;
+}
+
+.support-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.support-card img {
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.support-card p {
+  font-size: var(--font-xs);
+  color: gray;
+}
+
+/* Accordion Section */
+.accordion-section {
+  margin: 100px 0px;
+}
+
+/* Accordion Container */
+.accordion {
+  border: none;
+  padding: 0;
+}
+
+/* Accordion Item */
+.accordion-item {
+  position: relative;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.accordion-item:last-child {
+  border-bottom: none;
+}
+
+/* Accordion Header */
+.accordion-header {
+  font-size: 18px;
+  font-weight: 500;
+  color: #000;
+  background: none;
+  border: none;
+  outline: none;
+  text-align: left;
+  width: 100%;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+  position: relative;
+}
+
+/* Arrow Indicator */
+.accordion-header::after {
+  content: ">";
+  font-size: 14px;
+  color: #000;
+  position: absolute;
+  right: 0;
+  transform: rotate(0);
+  transition: transform 0.3s ease;
+}
+
+.accordion-header.active::after {
+  transform: rotate(90deg);
+}
+
+/* Accordion Content */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  padding-left: 15px;
+  border-left: 2px solid #000;
+}
+
+.accordion-content.open {
+  max-height: 200px;
+  opacity: 1;
+  padding: 10px 0 10px 15px;
+}
+
+.accordion-content p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--dark-gray);
+  line-height: 1.5;
+}
+
+/* banner */
+
+.banner {
+  margin: auto;
+  width: 100%;
+  height: 300px;
+  background-image: url("/assets/textures/banner-fiber.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.banner-logo {
+  color: white;
+  font-size: var(--font-xl);
+}
+
+.more-to-ask h4,
+.more-to-ask p {
+  color: whitesmoke;
+}
+
+.more-to-ask p {
+  font-size: var(--font-xs);
+}
+
+.banner-btn {
+  border: none;
+  outline: none;
+  padding: 15px 45px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.138);
+  backdrop-filter: blur(3px);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  font-size: var(--font-sm);
+}
+
+.banner-btn::after {
+  content: "";
+  width: 40px;
+  height: 100px;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  top: -40px;
+  left: -40px;
+  transform: rotate(30deg);
+  transition: all 0.5s ease-in-out;
+  pointer-events: none;
+}
+
+.banner-btn:hover::after {
+  left: 260px;
+}
+
+.testimonial-parallex {
+  margin: 30px;
+}
+
+@media (max-width: 1175px) {
+  .support-card-wrapper {
+    grid-template-columns: repeat(3, 160px);
+    place-items: center;
+    justify-content: center;
+  }
+
+  .banner-logo {
+    font-size: var(--font-lg);
+  }
+}
+
+@media (max-width: 875px) {
+  .support-card-wrapper {
+    grid-template-columns: repeat(2, 160px);
+  }
+
+  .accordion-section {
+    margin: 100px 0px;
+    padding: 0px 10px;
+  }
+
+  .qf {
+    font-size: var(--font-md);
+    padding: 30px 0px;
+  }
+
+  .more-to-ask p {
+    font-size: var(--font-xxs);
+  }
+
+  .banner-btn {
+    font-size: var(--font-xxs);
+  }
+}
+
+@media (max-width: 556px) {
+  .thumbnail {
+    height: 200px;
+  }
+
+  .thumbnail p {
+    font-size: var(--font-xs);
+    width: 90%;
+    text-align: center;
+  }
+
+  .banner {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .more-to-ask {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .banner-logo {
+    font-size: var(--font-xs);
+  }
+
+  .more-to-ask h4 {
+    font-size: var(--font-sm);
+  }
+
+  .support-card-wrapper {
+    grid-template-columns: repeat(1, 260px);
+  }
+
+  .testimonial-parallex {
+    margin: 0;
+  }
+}

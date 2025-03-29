@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link rel="stylesheet" href="/frontend/main.css">
+    <link rel="stylesheet" href="/frontend/pages/getstarted.css" />
+    <link rel="stylesheet" href="/frontend/animation/observer.css">
+
+
+    <title>Get Started | Admission Form</title>
+
+
+    <!-- scripts -->
+    <script defer src="/frontend/main.js"></script>
+    <script defer src="/frontend/script.js"></script>
+    <script defer src="/frontend/js/getStarted.js"></script>
+    <script defer src="/frontend/js/setting-menu.js"></script>
+    <script defer src="/frontend/animation/observer.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- dialog container-->
+    <div class="unauthorized-dialog-backdrop backdrop">
+      <div class="unauthorized-dialog-box">
+        <h2>Unauthorized</h2>
+        <p>You need to be logged in to access the page.</p>
+        <button id="closeDialogBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- Logout confirmation dialog -->
+    <div class="confirmation-dialog-backdrop backdrop">
+      <div class="logout-confirm-dialog-box">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to logout?</p>
+        <div class="dialog-buttons">
+          <button id="confirmLogoutBtn">Confirm</button>
+          <button id="cancelLogoutBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Signup Dialog Box -->
+    <div class="signin-signup-dialog-backdrop backdrop">
+      <div class="signin-signup-dialog-box">
+        <form action="" class="login-section" id="loginSection">
+          <!-- login Content -->
+          <h2>Welcome User !</h2>
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus, accusamus.</p>
+
+          <div class="input-box">
+            <input type="email" id="login-email" placeholder="Enter your email" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+          <div class="input-box">
+            <input type="password" id="login-password" placeholder="Enter your password" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+
+          <div class="login-footer">
+            <button class="btn-fill" type="submit" id="login-submit-btn">Login</button>
+            <p id="toggle-text">Don't have an account? <span id="toggle-signup">Sign up</span></p>
+          </div>
+
+          <div class="form-img-container">
+            <img src="/frontend/assets/textures/gym-graphic.svg" alt="gym-graphic">
+          </div>
+        </form>
+
+        <form action="" class="signup-section" id="signupSection">
+          <!-- signup Content -->
+          <h2>Let's create your account!</h2>
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus, accusamus.</p>
+
+          <div class="input-box">
+            <input type="text" id="signup-username" placeholder="Enter your username" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+          <div class="input-box">
+            <input type="email" id="signup-email" placeholder="Enter your email" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+          <div class="input-box">
+            <input type="password" id="signup-password" placeholder="Enter your password" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+          <div class="input-box">
+            <input type="password" id="signup-confirm-password" placeholder="Confirm password" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+
+          <div class="login-footer">
+            <button class="btn-fill" type="submit" id="signup-submit-btn">Sign up</button>
+            <p id="toggle-text">Already have an account? <span id="toggle-login">Login</span></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Settings menu -->
+    <div class="settings-menu">
+      <i class="fa-solid fa-gear"></i>
+      <div class="setting-menu-wrapper">
+        <ul>
+          <li id="dashboard-li">Dashboard</li>
+          <li id="auth-button">Login</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide-in Menu for mobile -->
+    <div class="menu-backdrop backdrop"></div>
+    <div class="slide-in-menu" id="slideMenu">
+      <div class="logo-container">
+        <h2 class="sub-heading-style">
+          <a href="/" style="color:black;">logo</a>
+        </h2>
+        <i class="fa-solid fa-x" id="closeSlideMenu"></i>
+      </div>
+
+      <ul>
+        <li><a class="hover-a" href="/getstarted">Get Started</a></li>
+        <li><a class="hover-a" href="/features">Features</a></li>
+        <li><a class="hover-a" href="/pricing">Pricing</a></li>
+        <li><a class="hover-a" href="/support">Support</a></li>
+        <li><a class="hover-a" href="/contact">Contact</a></li>
+      </ul>
+
+      <div class="slide-in-footer">
+        <h4>lorem some text</h4>
+        <ul>
+          <li><a href=""><i class="fa-brands fa-instagram"></i></a></li>
+          <li><a href=""><i class="fa-brands fa-facebook"></i></a></li>
+          <li><a href=""><i class="fa-brands fa-x-twitter"></i></a></li>
+        </ul>
+        <p>
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non natus ducimus sed est iusto minima
+          nesciunt
+          totam modi quae dolore.
+        </p>
+      </div>
+    </div>
+
+    <header id="header">
+      <div class="the-container">
+        <div class="header-content">
+          <div class="logo">
+            <a href="/">logo</a>
+          </div>
+          <nav class="nav">
+            <ul>
+              <li class="underline-on-hover">
+                <a href="/features">Features</a>
+              </li>
+              <li class="underline-on-hover">
+                <a href="/pricing">Pricing</a>
+              </li>
+              <li class="underline-on-hover">
+                <a href="/support">Support</a>
+              </li>
+              <li class="underline-on-hover">
+                <a href="/contact">Contact</a>
+              </li>
+            </ul>
+          </nav>
+          <div class="btn-nav">
+            <a href="/getstarted" class="btn-empty">Get Started</a>
+          </div>
+
+          <!-- Hamburger Menu -->
+          <div class="menu" id="toggleSlideMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="heading">
+        <h1>Let's get you started</h1>
+        <p>Enter the details to get going</p>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="progress-bar">
+        <div class="progress-wrapper">
+          <div class="progress-num">1</div>
+          <div class="progress-text">Personal Infomation</div>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="progress-wrapper">
+          <div class="progress-num">2</div>
+          <div class="progress-text">Emergency Infomation</div>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="progress-wrapper">
+          <div class="progress-num">3</div>
+          <div class="progress-text">Membership Details</div>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="progress-wrapper">
+          <div class="progress-num">3</div>
+          <div class="progress-text">Submit Form</div>
+        </div>
+
+      </div>
+
+
+      <div class="form-container">
+        <form id="applicationForm">
+
+          <!-- Personal -->
+          <section class="form-section">
+            <h2>Personal Information</h2>
+            <div class="container container-1">
+              <label for="firstname">First name</label>
+              <input id="firstname" name="firstname" type="text" placeholder="First name" required>
+            </div>
+            <div class="container container-2">
+              <label for="lastname">Last name</label>
+              <input id="lastname" name="lastname" type="text" placeholder="Last name" required>
+            </div>
+            <div class="container container-3">
+              <label for="email">Your Email</label>
+              <input id="email" name="email" type="email" placeholder="Email" required>
+            </div>
+            <div class="container container-4">
+              <label for="number">Your Number</label>
+              <input id="number" name="number" type="tel" placeholder="Number" required>
+            </div>
+            <div class="container container-5">
+              <label for="address">Your Address</label>
+              <input id="address" name="address" type="text" placeholder="Address" required>
+            </div>
+            <div class="container container-6">
+              <label for="dob">Date of Birth</label>
+              <input id="dob" name="dob" type="date" required>
+            </div>
+            <div class="container container-6">
+              <label>Gender</label>
+              <div class="radio-group">
+                <label>
+                  <input type="radio" name="gender" value="male" required>
+                  Male
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="female" required>
+                  Female
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- Emergency -->
+          <section class="form-section">
+            <h2>Emergency Contact Information</h2>
+
+            <div class="container container-1">
+              <label for="emergency-name">Emergency Contact Name</label>
+              <input id="emergency-name" name="emergencyName" type="text" placeholder="Full Name" required>
+            </div>
+            <div class="container container-2">
+              <label for="relationship">Relationship</label>
+              <input id="relationship" name="relationship" type="text" placeholder="e.g. Parent, Spouse, Sibling"
+                required>
+            </div>
+            <div class="container container-4">
+              <label for="emergency-phone">Emergency Contact Number</label>
+              <input id="emergency-phone" name="emergencyPhone" type="tel" placeholder="Phone Number" required>
+            </div>
+          </section>
+
+          <!-- Membership  -->
+          <section class="form-section">
+            <h2>Membership Details</h2>
+            <div class="container">
+              <label for="startDate">Membership Start Date</label>
+              <input id="startDate" name="startDate" type="date" required>
+            </div>
+            <div class="container">
+              <label for="membershipPeriod">Membership Duration</label>
+              <select id="membershipPeriod" name="membershipPeriod" required>
+                <option value="1">1 Month</option>
+                <option value="3">3 Months</option>
+                <option value="12">1 Year</option>
+              </select>
+            </div>
+            <div class="container">
+              <label>Membership Type</label>
+              <div class="radio-group">
+                <label>
+                  <input type="radio" name="membershipType" value="basic" required>
+                  Basic
+                </label>
+                <label>
+                  <input type="radio" name="membershipType" value="premium" required>
+                  Premium
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <div class="btn-container">
+            <button class="btn-fill" type="submit">Submit</button>
+          </div>
+
+        </form>
+      </div>
+
+
+    </main>
+
+    <footer>
+      <div class="the-container">
+        <div class="top-container">
+          <div class="footer-top">
+            <div class="footer-top-section-1">
+              <h4 class="footer-head">Push Your Limits</h4>
+              <img class="footer-top-section-1-img-1" src="/frontend/assets/icons/weight-wheel-icon.svg"
+                alt="weight-wheel-icon">
+            </div>
+            <div class="footer-top-section-2">
+              <video autoplay muted loop>
+                <source src="/frontend/assets/video/gym-animation-1-660px.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div class="footer-top-section-3">
+              <h4 class="footer-head">Stronger Every Day</h4>
+              <img class="footer-top-section-3-img-1" src="/frontend/assets/icons/dumbell-icon.svg" alt="dumbell-icon">
+              <img class="footer-top-section-3-img-2" src="/frontend/assets/icons/dumbell-icon.svg" alt="dumbell-icon">
+            </div>
+          </div>
+        </div>
+        <div class="footer-div-container">
+          <div class="box-1">
+            <h4>logo</h4>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non earum
+              fugiat ipsum, ab autem nulla?
+            </p>
+          </div>
+          <div class="box-2">
+            <h4>Features</h4>
+            <ul>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+            </ul>
+          </div>
+          <div class="box-3">
+            <h4>Social links</h4>
+            <ul>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+            </ul>
+          </div>
+          <div class="box-4">
+            <h4>heading</h4>
+            <input type="text" placeholder="Email Address" />
+            <div class="box-4-box">
+              <ul>
+                <li>
+                  <img src="/frontend/assets/icons/paper-plane-icon.svg" alt="paper-plane-icon" />
+                  <a href="">Email@gmail.com</a>
+                </li>
+                <li>
+                  <img src="/frontend/assets/icons/phone-icon.svg" alt="phone-icon" />
+                  <a href="">+977 000 000 0000</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer-footer">
+          <div>@2025-copyright</div>
+          <div>
+            <a href="" class="glow-on-hover underline-on-hover">facebook</a>
+            <a href="" class="glow-on-hover underline-on-hover">Instagram</a>
+            <a href="" class="glow-on-hover underline-on-hover">Twitter / X</a>
+          </div>
+          <div>legal paper</div>
+        </div>
+      </div>
+    </footer>
+
+
+
+  </body>
+
+</html>

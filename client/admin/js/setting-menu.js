@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // If valid, navigate based on the element's ID
       const target = event.target.id;
       if (target === "dashboard-li") {
-        window.location.href = "/admin/pages/dashboard";
+        window.location.href = "/admin/dashboard";
       }
     } catch (error) {
       console.error("Auth check failed in protected click:", error);
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Only redirect if the token is valid
       if (data.valid) {
-        const basePath = "/admin/pages/";
+        const basePath = "/admin/";
         window.location.href = `${basePath}${page}`;
       } else {
         // Optionally, show an unauthorized message or dialog here
@@ -259,7 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Show logout confirmation dialog
-  // Show logout confirmation dialog
   function showLogoutDialog() {
     if (logoutDialog && logoutBackdrop) {
       logoutBackdrop.style.display = "flex";
@@ -269,6 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 10);
     }
   }
+
   // Hide logout confirmation dialog
   function hideLogoutDialog() {
     if (logoutDialog && logoutBackdrop) {

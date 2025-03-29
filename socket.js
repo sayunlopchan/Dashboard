@@ -4,7 +4,8 @@ const { Server } = require("socket.io");
 const initializeSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://dashboard-xfpn.onrender.com",
+      // origin: "https://dashboard-xfpn.onrender.com",
+      origin: "http://localhost:5000",
       credentials: true,
     },
   });

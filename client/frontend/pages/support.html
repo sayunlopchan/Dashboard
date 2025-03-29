@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- style -->
+    <link rel="stylesheet" href="/frontend/main.css">
+    <link rel="stylesheet" href="/frontend/style.css">
+    <link rel="stylesheet" href="/frontend/pages/suport.css">
+    <link rel="stylesheet" href="/frontend/animation/observer.css">
+
+    <title>support page</title>
+
+    <script defer src="/frontend/main.js"></script>
+    <script defer src="/frontend/script.js"></script>
+    <script defer src="/frontend/js/accordian.js"></script>
+    <script defer src="/frontend/js/setting-menu.js"></script>
+    <script defer src="/frontend/js/testimonial.js"></script>
+    <script defer src="/frontend/animation/observer.js"></script>
+
+  </head>
+
+  <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- dialog container-->
+    <div class="unauthorized-dialog-backdrop backdrop">
+      <div class="unauthorized-dialog-box">
+        <h2>Unauthorized</h2>
+        <p>You need to be logged in to access the page.</p>
+        <button id="closeDialogBtn">Close</button>
+      </div>
+    </div>
+
+    <!-- Logout confirmation dialog -->
+    <div class="confirmation-dialog-backdrop backdrop">
+      <div class="logout-confirm-dialog-box">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to logout?</p>
+        <div class="dialog-buttons">
+          <button id="confirmLogoutBtn">Confirm</button>
+          <button id="cancelLogoutBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Signup Dialog Box -->
+    <div class="signin-signup-dialog-backdrop backdrop">
+      <div class="signin-signup-dialog-box">
+        <form action="" class="login-section" id="loginSection">
+          <!-- login Content -->
+          <h2>Welcome User !</h2>
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus, accusamus.</p>
+
+          <div class="input-box">
+            <input type="email" id="login-email" placeholder="Enter your email" required />
+            <span class="error-message"></span>
+          </div>
+          <div class="input-box">
+            <input type="password" id="login-password" placeholder="Enter your password" required />
+            <span class="error-message"></span>
+          </div>
+
+          <div class="login-footer">
+            <button class="btn-fill" type="submit" id="login-submit-btn">Login</button>
+            <p id="toggle-text">Don't have an account? <span id="toggle-signup">Sign up</span></p>
+          </div>
+
+          <div class="form-img-container">
+            <img src="/frontend/assets/textures/gym-graphic.svg" alt="gym-graphic">
+          </div>
+        </form>
+
+        <form action="" class="signup-section" id="signupSection">
+          <!-- signup Content -->
+          <h2>Let's create your account!</h2>
+          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus, accusamus.</p>
+
+          <div class="input-box">
+            <input type="text" id="signup-username" placeholder="Enter your username" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+          <div class="input-box">
+            <input type="email" id="signup-email" placeholder="Enter your email" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+          <div class="input-box">
+            <input type="password" id="signup-password" placeholder="Enter your password" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+          <div class="input-box">
+            <input type="password" id="signup-confirm-password" placeholder="Confirm password" required />
+            <span class="error-message"></span> <!-- Added for error messages -->
+          </div>
+
+          <div class="login-footer">
+            <button class="btn-fill" type="submit" id="signup-submit-btn">Sign up</button>
+            <p id="toggle-text">Already have an account? <span id="toggle-login">Login</span></p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Settings menu -->
+    <div class="settings-menu">
+      <i class="fa-solid fa-gear"></i>
+      <div class="setting-menu-wrapper">
+        <ul>
+          <li id="dashboard-li">Dashboard</li>
+          <li id="auth-button">Login</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide-in Menu for mobile -->
+    <div class="menu-backdrop backdrop"></div>
+    <div class="slide-in-menu" id="slideMenu">
+      <div class="logo-container">
+        <h2 class="sub-heading-style">
+          <a href="/" style="color:black;">logo</a>
+        </h2>
+        <i class="fa-solid fa-x" id="closeSlideMenu"></i>
+      </div>
+
+      <ul>
+        <li>
+          <a class="hover-a" href="/getstarted">Get Started</a>
+        </li>
+        <li><a class="hover-a" href="/features">Features</a></li>
+        <li><a class="hover-a" href="/pricing">Pricing</a></li>
+        <li><a class="hover-a" href="/support">Support</a></li>
+        <li><a class="hover-a" href="/contact">Contact</a></li>
+      </ul>
+
+      <div class="slide-in-footer">
+        <h4>lorem some text</h4>
+        <ul>
+          <li><a href=""><i class="fa-brands fa-instagram"></i></a></li>
+          <li><a href=""><i class="fa-brands fa-facebook"></i></a></li>
+          <li><a href=""><i class="fa-brands fa-x-twitter"></i></a></li>
+        </ul>
+        <p>
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non natus ducimus sed est iusto minima
+          nesciunt
+          totam modi quae dolore.
+        </p>
+      </div>
+    </div>
+
+
+    <header id="header">
+      <div class="the-container">
+        <div class="header-content">
+          <div class="logo">
+            <a href="/">logo</a>
+          </div>
+          <nav class="nav">
+            <ul>
+              <li class="underline-on-hover">
+                <a href="/features">Features</a>
+              </li>
+              <li class="underline-on-hover">
+                <a href="/pricing">Pricing</a>
+              </li>
+              <li class="underline-on-hover">
+                <a href="/support">Support</a>
+              </li>
+              <li class="underline-on-hover">
+                <a href="/contact">Contact</a>
+              </li>
+            </ul>
+          </nav>
+          <div class="btn-nav">
+            <a href="/getstarted" class="btn-empty">Get Started</a>
+          </div>
+
+          <!-- Hamburger Menu -->
+          <div class="menu" id="toggleSlideMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="thumbnail">
+        <h1>Contents</h1>
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eos, sed.</p>
+      </div>
+      <div class="the-container">
+        <div class="center-box">
+          <h4>some text</h4>
+          <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eveniet assumenda pariatur dignissimos sit cumque
+            quibusdam consequatur harum ducimus, quod voluptates alias corrupti ullam eos voluptas commodi sunt quasi
+            saepe sed?</p>
+
+        </div>
+        <h2 class="sub-heading-style qf">Quickfind answers</h2>
+        <div class="support-card-wrapper">
+          <div class="support-card slide-from-down">
+            <img src="/frontend/assets/icons/pfp.png" alt="icon-img" width="50px" height="50px">
+            <h3>card-title</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit..</p>
+          </div>
+
+          <div class="support-card delay-slide-from-down-1">
+            <img src="/frontend/assets/icons/pfp.png" alt="icon-img" width="50px" height="50px">
+            <h3>card-title</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit..</p>
+          </div>
+
+          <div class="support-card delay-slide-from-down-2">
+            <img src="/frontend/assets/icons/pfp.png" alt="icon-img" width="50px" height="50px">
+            <h3>card-title</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit..</p>
+          </div>
+
+          <div class="support-card delay-slide-from-down-3">
+            <img src="/frontend/assets/icons/pfp.png" alt="icon-img" width="50px" height="50px">
+            <h3>card-title</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit..</p>
+          </div>
+
+          <div class="support-card delay-slide-from-down-3">
+            <img src="/frontend/assets/icons/pfp.png" alt="icon-img" width="50px" height="50px">
+            <h3>card-title</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit..</p>
+          </div>
+        </div>
+
+        <div class="accordion-section">
+          <h3 class="sub-heading-style">Billing FAQs</h3>
+          <div class="accordion">
+            <div class="accordion-item">
+              <button class="accordion-header">Section 1</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 1.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 2</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 2.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Section 3</button>
+              <div class="accordion-content">
+                <p>This is the content for Section 3.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="banner">
+          <div class="banner-box-1">
+            <div class="more-to-ask">
+              <h4>Still have Questions?</h4>
+              <p>Lorem ipsum dolor sit amet consectetur, Id, alias!</p>
+            </div>
+          </div>
+
+          <button class="banner-btn">Quick Question</button>
+        </div>
+
+        <div class="testimonial-parallex">
+
+          <!-- heading -->
+          <div class="testimonial-heading">
+            <h3 class="sub-heading-style testimonial-heading">Our members testimonials</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur quidem error odit alias cum totam
+              recusandae facere eos ratione dolores libero, iure obcaecati non modi, reiciendis asperiores quibusdam
+              veritatis amet?</p>
+          </div>
+          <img src="/frontend/assets/icons/quotation-mark.svg" alt="quotation-mark" width="20px" id="quotation-mark">
+
+          <!-- Testimonial Card Section -->
+          <div class="testimonial-card-container">
+
+
+
+            <div class="testimonial-card-slider" id="testimonialSlider">
+
+              <!-- card-1 -->
+              <div class="testimonial-card">
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Adipisci, at. Dolorem, porro delectus
+                  magnam expedita qui id vel provident reprehenderit praesentium incidunt quam, sint voluptatibus,
+                  molestias accusantium? Placeat, autem itaque.</p>
+                <div>
+                  <span class="testimonial-name">- name-1</span>
+                </div>
+              </div>
+              <!-- card-2 -->
+              <div class="testimonial-card">
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Adipisci, at. Dolorem, porro delectus
+                  magnam expedita qui id vel provident reprehenderit praesentium incidunt quam, sint voluptatibus,
+                  molestias accusantium? Placeat, autem itaque.</p>
+                <div>
+                  <span class="testimonial-name">- name-2</span>
+                </div>
+              </div>
+              <!-- card-3 -->
+              <div class="testimonial-card">
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Adipisci, at. Dolorem, porro delectus
+                  magnam expedita qui id vel provident reprehenderit praesentium incidunt quam, sint voluptatibus,
+                  molestias accusantium? Placeat, autem itaque.</p>
+                <div>
+                  <span class="testimonial-name">- name-3</span>
+                </div>
+              </div>
+              <!-- card-4 -->
+              <div class="testimonial-card">
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Adipisci, at. Dolorem, porro delectus
+                  magnam expedita qui id vel provident reprehenderit praesentium incidunt quam, sint voluptatibus,
+                  molestias accusantium? Placeat, autem itaque.</p>
+                <div>
+                  <span class="testimonial-name">- name-4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slider-controls">
+            <button class="slider-btn" id="prevBtn">
+              <i class="fa-solid fa-less-than prev"></i>
+            </button>
+            <button class="slider-btn" id="nextBtn">
+              <i class="fa-solid fa-greater-than next"></i>
+            </button>
+          </div>
+
+          <!-- Parallax Effect Section -->
+          <div class="parallext-effect-container">
+
+            <div class=" parallext-circle parallext-circle1">
+            </div>
+            <div class="parallext-circle parallext-circle2"></div>
+            <div class="parallext-circle-big parallext-circle3"></div>
+
+
+            <div class="expand-and-fade-parent-circle">
+              <div class="expand-and-fade-child-circle1"></div>
+              <div class="expand-and-fade-child-circle2"></div>
+              <div class="expand-and-fade-child-circle3"></div>
+              <div class="expand-and-fade-child-circle4"></div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="the-container">
+        <div class="top-container">
+          <div class="footer-top">
+            <div class="footer-top-section-1">
+              <h4 class="footer-head">Push Your Limits</h4>
+              <img class="footer-top-section-1-img-1" src="/frontend/assets/icons/weight-wheel-icon.svg"
+                alt="weight-wheel-icon">
+            </div>
+            <div class="footer-top-section-2">
+              <video autoplay muted loop>
+                <source src="/frontend/assets/video/gym-animation-1-660px.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div class="footer-top-section-3">
+              <h4 class="footer-head">Stronger Every Day</h4>
+              <img class="footer-top-section-3-img-1" src="/frontend/assets/icons/dumbell-icon.svg" alt="dumbell-icon">
+              <img class="footer-top-section-3-img-2" src="/frontend/assets/icons/dumbell-icon.svg" alt="dumbell-icon">
+            </div>
+          </div>
+        </div>
+        <div class="footer-div-container">
+          <div class="box-1">
+            <h4>logo</h4>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non earum
+              fugiat ipsum, ab autem nulla?
+            </p>
+          </div>
+          <div class="box-2">
+            <h4>Features</h4>
+            <ul>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+            </ul>
+          </div>
+          <div class="box-3">
+            <h4>Social links</h4>
+            <ul>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+              <li><a href="">Somelinks</a></li>
+            </ul>
+          </div>
+          <div class="box-4">
+            <h4>heading</h4>
+            <input type="text" placeholder="Email Address" />
+            <div class="box-4-box">
+              <ul>
+                <li>
+                  <img src="/frontend/assets/icons/paper-plane-icon.svg" alt="paper-plane-icon" />
+                  <a href="">Email@gmail.com</a>
+                </li>
+                <li>
+                  <img src="/frontend/assets/icons/phone-icon.svg" alt="phone-icon" />
+                  <a href="">+977 000 000 0000</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer-footer">
+          <div>@2025-copyright</div>
+          <div>
+            <a href="" class="glow-on-hover underline-on-hover">facebook</a>
+            <a href="" class="glow-on-hover underline-on-hover">Instagram</a>
+            <a href="" class="glow-on-hover underline-on-hover">Twitter / X</a>
+          </div>
+          <div>legal paper</div>
+        </div>
+      </div>
+    </footer>
+  </body>
+
+</html>

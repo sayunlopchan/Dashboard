@@ -1,0 +1,309 @@
+/* Testimonial Grid Layout */
+.testimonial-parallex {
+  min-height: 400px;
+  max-height: 600px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  padding: 20px;
+  position: relative;
+  gap: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.testimonial-card-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  grid-row: span 2;
+  order: 3;
+}
+
+#quotation-mark {
+  position: absolute;
+  top: 10px;
+  rotate: 78deg;
+}
+
+.testimonial-card-slider {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  gap: 10px;
+}
+
+.testimonial-card {
+  display: grid;
+  grid-template-columns: 80%, 10%;
+  min-width: 100%;
+  background-color: #ededed4a;
+  padding: 5px;
+}
+
+.testimonial-card p {
+  font-size: var(--font-sm);
+  color: black;
+}
+
+.testimonial-name {
+  font-size: var(--font-sm);
+  font-style: italic;
+  color: rebeccapurple;
+  float: right;
+  padding-right: 5px;
+}
+
+.slider-controls {
+  position: absolute;
+  bottom: 5px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.slider-btn {
+  cursor: pointer;
+  font-size: 14px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  outline: none;
+  border: none;
+  z-index: 1;
+  background-color: var(--primary-color);
+  color: var(--light);
+}
+
+.slider-btn:hover .prev {
+  transition: 0.6s ease;
+  transform: translateX(-8px);
+}
+
+.slider-btn:hover .next {
+  transition: 0.6s ease;
+  transform: translateX(8px);
+}
+
+/* Parallax Effect Styles */
+.parallext-effect-container {
+  position: relative;
+  order: 2;
+  grid-row: span 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.expand-and-fade-parent-circle {
+  width: 200px;
+  height: 200px;
+  border: 2px solid orange;
+  background-color: transparent;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  animation: rotateParent 12s linear infinite;
+  /* Rotate the parent circle */
+}
+
+/* Keyframe animation for rotating the parent circle */
+@keyframes rotateParent {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Common styles for child circles */
+.expand-and-fade-child-circle1,
+.expand-and-fade-child-circle2,
+.expand-and-fade-child-circle3,
+.expand-and-fade-child-circle4 {
+  border: 2px solid orange;
+  border-radius: 50%;
+  position: absolute;
+  animation-duration: 6s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Individual child circle animations */
+.expand-and-fade-child-circle1 {
+  width: 150px;
+  height: 150px;
+  animation-name: pulseAndRotate1;
+  animation-delay: 0s;
+}
+
+.expand-and-fade-child-circle2 {
+  width: 100px;
+  height: 100px;
+  animation-name: pulseAndRotate2;
+  animation-delay: 1.5s;
+}
+
+.expand-and-fade-child-circle3 {
+  width: 80px;
+  height: 80px;
+  animation-name: pulseAndRotate3;
+  animation-delay: 3s;
+}
+
+.expand-and-fade-child-circle4 {
+  width: 50px;
+  height: 50px;
+  animation-name: pulseAndRotate4;
+  animation-delay: 4.5s;
+}
+
+/* Keyframe animations for child circles */
+@keyframes pulseAndRotate1 {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulseAndRotate2 {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.3) rotate(-180deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulseAndRotate3 {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.4) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulseAndRotate4 {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5) rotate(-180deg);
+    opacity: 0.6;
+  }
+}
+
+.parallext-circle {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: transform 0.2s ease-out;
+}
+
+.parallext-circle-big {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  transition: transform 0.2s ease-out;
+  z-index: 1;
+}
+
+.parallext-circle1 {
+  background-color: var(--highlight-color-2);
+  top: 20%;
+  left: 20%;
+}
+
+.parallext-circle2 {
+  background-color: var(--highlight-color-1);
+  top: 59%;
+  left: 28%;
+}
+
+.parallext-circle3 {
+  background-color: rgba(255, 166, 0, 0.396);
+  inset: 50%;
+}
+
+/* Parallax effect triggered on parent div hover */
+.testimonial-parallex:hover .parallext-circle1,
+.testimonial-parallex:hover .parallext-circle2 {
+  transition: transform 0.2s ease-out;
+}
+
+/* Responsive Styling */
+@media (max-width: 986px) {
+  .testimonial-parallex {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    padding: 10px;
+    height: auto;
+  }
+
+  .testimonial-card-container {
+    height: auto;
+  }
+
+  .text-content-section-8 {
+    height: auto;
+  }
+
+  .testimonial-card-slider {
+    height: auto;
+  }
+
+  .parallext-effect-container {
+    display: none;
+  }
+
+  .testimonial-card {
+    font-size: 16px;
+  }
+
+  .slider-btn {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonial-card {
+    font-size: 14px;
+    padding: 15px;
+  }
+
+  .parallext-circle {
+    width: 20px;
+    height: 20px;
+  }
+}

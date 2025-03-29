@@ -29,7 +29,8 @@ const io = initializeSocket(server);
 
 // Enable CORS for Express routes
 const allowedOrigins = [
-  "https://gym-website-git-norevenue-sayunlopchans-projects.vercel.app",
+  "https://dashboard-xfpn.onrender.com",
+  // "http://localhost:5000",
 ];
 
 app.use(
@@ -56,12 +57,67 @@ app.use("/api/members", memberRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/applicationsdata", applicationsData);
 
-app.use(express.static(path.join(__dirname)));
-app.use(express.static(path.join(__dirname, "client")));
+// Serve public frontend static assets under "/frontend"
+app.use(
+  "/frontend",
+  express.static(path.join(__dirname, "client", "frontend"))
+);
 
-// dynamic protected routes
-app.get("/admin/pages/:page", authenticate, checkAdmin, (req, res) => {
-  const page = req.params.page; // gets the page name from the URL
+app.use("/admin", express.static(path.join(__dirname, "client", "admin")));
+
+// "/" route serves the public index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "frontend", "index.html"));
+});
+
+// Dynamic Unprotected Public Pages Route
+app.get("/:page", (req, res, next) => {
+  const page = req.params.page;
+  if (["api", "admin", "frontend"].includes(page)) {
+    return next();
+  }
+
+  if (!/^[a-zA-Z0-9_-]+$/.test(page)) {
+    return res.status(400).send("Invalid page request");
+  }
+  const filePath = path.join(
+    __dirname,
+    "client",
+    "frontend",
+    "pages",
+    `${page}.html`
+  );
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(`Error serving file: ${filePath}`, err);
+      res.status(404).send("Page not found");
+    }
+  });
+});
+
+// Unprotected Unauthorized Page Route
+app.get("/admin/unauthorized", (req, res) => {
+  const filePath = path.join(
+    __dirname,
+    "client",
+    "admin",
+    "pages",
+    "unauthorized.html"
+  );
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(`Error serving unauthorized page: ${filePath}`, err);
+      res.status(404).send("Page not found");
+    }
+  });
+});
+
+// Dynamic Protected Admin Pages Route
+app.get("/admin/:page", authenticate, checkAdmin, (req, res) => {
+  const page = req.params.page;
+  if (!/^[a-zA-Z0-9_-]+$/.test(page)) {
+    return res.status(400).send("Invalid admin page request");
+  }
   const filePath = path.join(
     __dirname,
     "client",
@@ -71,6 +127,7 @@ app.get("/admin/pages/:page", authenticate, checkAdmin, (req, res) => {
   );
   res.sendFile(filePath, (err) => {
     if (err) {
+      console.error(`Error serving admin file: ${filePath}`, err);
       res.status(404).send("Page not found");
     }
   });
@@ -84,6 +141,6 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(
-    `Admin static files served from: ${path.join(__dirname, "admin")}`
+    `Admin static files are protected and served only via the secure route.`
   );
 });
