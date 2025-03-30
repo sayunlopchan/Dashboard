@@ -793,7 +793,7 @@
 .section-6,
 .section-7,
 .section-8 {
-  margin: 100px 0;
+  margin: 80px 0;
 }
 
 
@@ -854,7 +854,7 @@
     margin: 0;
   }
 
-  .img-container-2 {
+  .section-2>.the-container section:nth-child(2) {
     display: none;
   }
 
@@ -898,10 +898,6 @@
 
   .section-5>.the-container section:nth-child(2) {
     padding: 0;
-  }
-
-  .section-7 {
-    padding: 30px;
   }
 
   .section-3>.the-container .bento-grid {

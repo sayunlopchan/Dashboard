@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (applicationLink) {
     applicationLink.addEventListener("click", () => {
-      redirectToPage("Applications");
+      redirectToPage("applications");
     });
   }
 });
