@@ -45,7 +45,6 @@
 .filter-select {
   padding: 10px 20px;
   padding-right: 40px;
-  /* Add space for custom arrow */
   border-radius: 12px;
   border: 2px solid #ccc;
   background: white;
@@ -64,7 +63,6 @@
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 20px;
-  width: 200px;
 }
 
 /* Style for options */
@@ -132,5 +130,11 @@
 @media (max-width:968px) {
   .analytics-stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width:360px) {
+  .analytics-chart-header>.the-container {
+    flex-direction: column;
   }
 }

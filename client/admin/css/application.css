@@ -17,6 +17,7 @@ main>.the-container {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  gap: 20px;
 }
 
 h1 {
@@ -44,12 +45,6 @@ h1 {
   background: #f8fafc;
 }
 
-.search-input:focus {
-  outline: none;
-  border-color: #818cf8;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
-}
 
 .search-icon {
   position: absolute;
@@ -151,11 +146,6 @@ h1 {
   transition: border-color 0.2s ease;
 }
 
-.filter-item select:focus {
-  outline: none;
-  border-color: #818cf8;
-  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.1);
-}
 
 .loading {
   text-align: center;
@@ -176,8 +166,11 @@ h1 {
 
   .filter-box {
     position: static;
-    margin-bottom: 2rem;
   }
+}
 
-
+@media (max-width:480px) {
+  .applicationlist-header {
+    flex-direction: column;
+  }
 }

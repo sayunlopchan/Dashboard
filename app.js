@@ -29,8 +29,8 @@ const io = initializeSocket(server);
 
 // Enable CORS for Express routes
 const allowedOrigins = [
-  "https://dashboard-xfpn.onrender.com",
-  // "http://localhost:5000",
+  // "https://dashboard-xfpn.onrender.com",
+  "http://localhost:5000",
 ];
 
 app.use(

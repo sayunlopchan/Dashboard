@@ -125,4 +125,15 @@ main {
   .stats-card {
     flex: 1 1 100%;
   }
+
+  .func-actions>button {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-section>.the-container {
+    flex-direction: column;
+    justify-content: center;
+  }
 }

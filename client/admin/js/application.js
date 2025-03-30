@@ -32,7 +32,7 @@ function displayApplications(applications) {
 
     // Attach click event to redirect to application detail page using _id
     card.addEventListener("click", () => {
-      window.location.href = `/admin/pages/application-detail?applicationId=${encodeURIComponent(
+      window.location.href = `/admin/application-detail?applicationId=${encodeURIComponent(
         application._id
       )}`;
     });

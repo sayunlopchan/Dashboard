@@ -32,7 +32,7 @@ function displayMembers(members) {
 
     // Redirect to detail page on card click
     card.addEventListener("click", () => {
-      window.location.href = `/admin/pages/member-detail?memberId=${encodeURIComponent(
+      window.location.href = `/admin/member-detail?memberId=${encodeURIComponent(
         member.memberId
       )}`;
     });

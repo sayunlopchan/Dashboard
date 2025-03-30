@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       // On click, redirect to the detail page passing the memberId in query parameters
       li.addEventListener("click", () => {
-        window.location.href = `/admin/pages/member-detail?memberId=${encodeURIComponent(
+        window.location.href = `/admin/member-detail?memberId=${encodeURIComponent(
           member.memberId
         )}`;
       });

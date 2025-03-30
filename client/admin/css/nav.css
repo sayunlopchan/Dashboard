@@ -45,7 +45,7 @@
   top: 60px;
   background-color: white;
   border-radius: 8px;
-  width: 100%;
+  width: fit-content;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   display: none;
 }
@@ -92,10 +92,6 @@
   width: 40px;
   align-items: center;
   cursor: pointer;
-  background-color: white;
-  padding: 1.5rem 3rem;
-  border-radius: 1rem;
-  border: 1px solid gainsboro;
 }
 
 
