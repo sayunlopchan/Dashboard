@@ -73,8 +73,8 @@ const registerApplication = asyncHandler(async (req, res) => {
     const io = req.app.get("io");
     if (io) {
       io.emit("newNotification", notification);
-      io.emit("newApplication", application); // Emit new application event
-      io.emit("newApplicationsData", appData); // Emit new application data event
+      io.emit("newApplication", application);
+      io.emit("newApplicationsData", appData);
     }
 
     res.status(201).json({ application, notification });
