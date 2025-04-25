@@ -92,63 +92,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // NOTIFICATION
 document.addEventListener("DOMContentLoaded", () => {
-  document.addEventListener("DOMContentLoaded", function () {
-    // Initialize Socket.IO connection
-    const socket = io(baseURL);
+  // Initialize Socket.IO connection
+  const socket = io(baseURL);
 
-    const notiBell = document.getElementById("notiBell");
-    const notiCount = document.getElementById("notiCount");
-    const notiModal = document.getElementById("notiModal");
-    const notifactionData = document.getElementById("notificationData");
-    const markAllBtn = document.querySelector(".noti-filter");
+  const notiCount = document.getElementById("notiCount");
+  const notifactionData = document.getElementById("notificationData");
+  const markAllBtn = document.querySelector(".noti-filter");
 
-    // Prevent clicks on the notification count from toggling the modal
-    notiCount.addEventListener("click", function (event) {
-      event.stopPropagation();
-    });
+  // Prevent clicks on the notification count from toggling the modal
+  notiCount.addEventListener("click", function (event) {
+    event.stopPropagation();
+  });
 
-    // Socket.IO listeners
-    socket.on("connect", () => {
-      console.log("Connected to Socket.IO server");
-    });
+  // Socket.IO listeners
+  socket.on("connect", () => {
+    console.log("Connected to Socket.IO server");
+  });
 
-    // Listen for new notifications and updates
-    socket.on("newNotification", fetchNotifications);
-    socket.on("notification-update", fetchNotifications);
+  // Listen for new notifications and updates
+  socket.on("newNotification", fetchNotifications);
+  socket.on("notification-update", fetchNotifications);
 
-    // Fetch notifications from the backend
-    async function fetchNotifications() {
-      try {
-        const response = await fetch(`${baseURL}/api/notifications`);
-        const notifications = await response.json();
-        updateNotificationUI(notifications);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
+  // Fetch notifications from the backend
+  async function fetchNotifications() {
+    try {
+      const response = await fetch(`${baseURL}/api/notifications`);
+      const notifications = await response.json();
+      updateNotificationUI(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  }
+
+  // Update the notification UI
+  function updateNotificationUI(notifications) {
+    notifactionData.innerHTML = ""; // Clear existing notifications
+
+    if (notifications.length === 0) {
+      notifactionData.innerHTML = `<div class="noNoti-Data"><p>No Notification</p></div>`;
+      notiCount.textContent = "0";
+      notiCount.style.display = "none"; // Hide the notification count
+      return;
     }
 
-    // Update the notification UI
-    function updateNotificationUI(notifications) {
-      notifactionData.innerHTML = ""; // Clear existing notifications
+    // Calculate unread count
+    const unreadCount = notifications.filter((noti) => !noti.isRead).length;
+    notiCount.textContent = unreadCount;
+    notiCount.style.display = unreadCount > 0 ? "block" : "none";
 
-      if (notifications.length === 0) {
-        notifactionData.innerHTML = `<div class="noNoti-Data"><p>No Notification</p></div>`;
-        notiCount.textContent = "0";
-        notiCount.style.display = "none"; // Hide the notification count
-        return;
-      }
-
-      // Calculate unread count
-      const unreadCount = notifications.filter((noti) => !noti.isRead).length;
-      notiCount.textContent = unreadCount;
-      notiCount.style.display = unreadCount > 0 ? "block" : "none";
-
-      // Show only the first 4 notifications
-      const notificationsToShow = notifications.slice(0, 4);
-      notificationsToShow.forEach((noti) => {
-        const notiItem = document.createElement("div");
-        notiItem.className = `noti-data ${noti.isRead ? "" : "unread"}`;
-        notiItem.innerHTML = `
+    // Show only the first 4 notifications
+    const notificationsToShow = notifications.slice(0, 4);
+    notificationsToShow.forEach((noti) => {
+      const notiItem = document.createElement("div");
+      notiItem.className = `noti-data ${noti.isRead ? "" : "unread"}`;
+      notiItem.innerHTML = `
           <div class="noti-head">${
             noti.type === "application"
               ? "New Application"
@@ -160,63 +157,66 @@ document.addEventListener("DOMContentLoaded", () => {
           ).toLocaleString()}</div>
         `;
 
+      // When clicking a notification, mark it as read  and redirect to the detail page.
+      notiItem.addEventListener("click", async () => {
         if (!noti.isRead) {
-          notiItem.addEventListener("click", async () => {
-            const success = await markAsRead(noti._id);
-            if (success) {
-              fetchNotifications();
-            }
-          });
+          const success = await markAsRead(noti._id);
+          if (!success) return; // If marking as read fails, don't redirect.
         }
-        notifactionData.appendChild(notiItem);
+        // Redirect to the detail page.
+        // If the notification object includes an applicationId, use it; otherwise, use a fallback value.
+        const applicationId = noti.applicationId;
+        window.location.href = `${baseURL}/admin/application-detail?applicationId=${applicationId}`;
       });
-    }
 
-    // Mark a single notification as read and refresh the UI
-    async function markAsRead(id) {
-      try {
-        const response = await fetch(`${baseURL}/api/notifications/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          socket.emit("notification-read", id); // Notify server
-          return true;
-        }
-        throw new Error("Failed to mark notification as read");
-      } catch (error) {
-        console.error("Error marking notification as read:", error);
-        return false;
-      }
-    }
-
-    // Mark all notifications as read and refresh the UI
-    markAllBtn.addEventListener("click", async function (event) {
-      event.stopPropagation(); // Prevent the click from toggling the modal
-      try {
-        const response = await fetch(`${baseURL}/api/notifications`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          socket.emit("all-notifications-read");
-          fetchNotifications();
-        }
-      } catch (error) {
-        console.error("Error marking all notifications as read:", error);
-      }
+      notifactionData.appendChild(notiItem);
     });
+  }
 
-    // Initial fetch of notifications
-    fetchNotifications();
+  // Mark a single notification as read and refresh the UI
+  async function markAsRead(id) {
+    try {
+      const response = await fetch(`${baseURL}/api/notifications/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        socket.emit("notification-read", id); // Notify server
+        return true;
+      }
+      throw new Error("Failed to mark notification as read");
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      return false;
+    }
+  }
 
-    // Cleanup on page unload
-    window.addEventListener("beforeunload", () => {
-      socket.disconnect();
-    });
+  // Mark all notifications as read and refresh the UI
+  markAllBtn.addEventListener("click", async function (event) {
+    event.stopPropagation(); // Prevent the click from toggling the modal
+    try {
+      const response = await fetch(`${baseURL}/api/notifications`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        socket.emit("all-notifications-read");
+        fetchNotifications();
+      }
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  });
+
+  // Initial fetch of notifications
+  fetchNotifications();
+
+  // Cleanup on page unload
+  window.addEventListener("beforeunload", () => {
+    socket.disconnect();
   });
 });

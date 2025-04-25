@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/admin/css/dashboard.css">
     <link rel="stylesheet" href="/admin/css/addMember.css">
     <link rel="stylesheet" href="/admin/css/addRenew.css">
+    <link rel="stylesheet" href="/admin/css/alertCard.css">
 
     <title>Dashboard</title>
 
@@ -248,6 +249,7 @@
         <div class="the-container">
           <div class="stats-container">
             <!-- TOTAL MEMBER -->
+
             <div class="stats-card">
               <div>
                 <h3>Total Members</h3>
@@ -329,6 +331,48 @@
           </div>
         </div>
       </section>
+
+
+      <!-- Membership Alert -->
+      <section class="memberAlert">
+        <div class="the-container">
+          <!-- Header with counts -->
+          <div class="alert-header">
+            <h2>Membership Alerts</h2>
+            <div class="alert-count">
+              <span id="expiringCount">0</span> expiring soon •
+              <span id="expiredCount">0</span> expired
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <!-- Table-style container -->
+            <div class="table-style-container">
+              <!-- Table header -->
+              <div class="table-header">
+                <div class="header-cell name">Member</div>
+                <div class="header-cell id">Member ID</div>
+                <div class="header-cell email">Email</div>
+                <div class="header-cell status">Status</div>
+                <div class="header-cell days">Days</div>
+              </div>
+
+              <!-- Empty state -->
+              <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p>No memberships expiring soon</p>
+              </div>
+
+              <!-- Table rows will be inserted here -->
+              <div class="table-rows"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       <!-- ANALYTICS-CHART -->
       <section class="analytics-section">

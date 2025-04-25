@@ -11,7 +11,8 @@
 
 
     <title>Member Details - XXXX XXXX</title>
-
+    <!-- socket.io client -->
+    <script defer src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <!-- scripts -->
     <script defer src="/admin/js/main.js"></script>
     <script defer src="/admin/js/member-detail.js"></script>
@@ -181,10 +182,7 @@
           <!-- Membership Details Card -->
           <section class="card membership">
             <h2 class="card-title">
-              <svg class="icon" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z" />
-              </svg>
+              <svg class="icon" viewBox="0 0 24 24">…</svg>
               Membership Details
             </h2>
             <div class="info-grid">
@@ -192,7 +190,6 @@
               <div class="info-item">
                 <label>Renewal</label>
                 <p class="renewal-value">Loading...</p>
-                <!-- show active text if renew is true in database not active is false -->
               </div>
 
               <div class="info-item">
@@ -202,11 +199,15 @@
 
               <div class="info-item">
                 <label>End date</label>
-                <p class="end-value">Loading...</p>
+                <p class="end-value">
+                  Loading...
+                  <span class="warning-icon" title="Membership ending soon!">!</span>
+                </p>
               </div>
 
             </div>
           </section>
+
 
         </div>
       </div>

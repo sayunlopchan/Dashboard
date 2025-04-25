@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/admin/css/main.css" />
     <link rel="stylesheet" href="/admin/css/member.css" />
     <title>Members</title>
+    <!-- socket.io client -->
+    <script defer src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script defer src="/admin/js/main.js"></script>
     <script defer src="/admin/js/setting-menu.js"></script>
     <script defer src="/admin/js/toggle.js"></script>
@@ -148,7 +150,12 @@
           </div>
         </section>
 
-        <div id="memberTemplate" class="member-card" style="display:none;">
+        <div id="memberTemplate" class="member-card" style="display: none;">
+          <div class="warning-icon">
+            !
+            <span class="tooltip-text"></span>
+          </div>
+
           <div class="member-data">
             <h4 class="member-fullname">FULLNAME</h4>
             <p class="member-email">HELLOWORLD@example.com</p>
@@ -165,6 +172,7 @@
             </p>
           </div>
         </div>
+
       </div>
     </main>
 

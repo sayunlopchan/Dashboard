@@ -61,12 +61,14 @@ h1 {
 }
 
 .member-card {
+  position: relative;
   background: white;
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: 1px solid #f1f5f9;
+  cursor: pointer;
 }
 
 .member-card:hover {
@@ -97,6 +99,51 @@ h1 {
   align-items: center;
   gap: 0.5rem;
 }
+
+
+.warning-icon {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: #b91c1c;
+  /* Bloody red */
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  z-index: 10;
+  cursor: default;
+}
+
+/* Hide the tooltip by default */
+.warning-icon .tooltip-text {
+  display: none;
+  position: absolute;
+  bottom: 120%;
+  right: 50%;
+  transform: translateX(0%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* On hover, show it */
+.warning-icon:hover .tooltip-text {
+  display: block;
+  opacity: 1;
+}
+
 
 /* Filter Section Redesign */
 .filter-box {

@@ -263,107 +263,19 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // OVERVIEW STATS CARD
-document.addEventListener("DOMContentLoaded", async () => {
-  // Connect to Socket.IO
-  const socket = io(baseURL);
-  console.log("overview check", baseURL);
-  // Cached data
-  let cachedMembers = [];
-  let cachedApplications = [];
-
-  // Debounce updateMetrics to avoid excessive DOM updates
-  let updateTimeout;
-  function debouncedUpdateMetrics() {
-    if (updateTimeout) clearTimeout(updateTimeout);
-    updateTimeout = setTimeout(() => {
-      updateMetrics(cachedMembers, cachedApplications);
-    }, 100); // Adjust delay as needed
-  }
-
-  // Listen for a new member creation event
-  socket.on("newMember", (member) => {
-    console.log("New member created:", member);
-    // Check if the member is already in the cache; if not, add it
-    if (!cachedMembers.find((m) => m._id === member._id)) {
-      cachedMembers.push(member);
-      debouncedUpdateMetrics();
-    }
-  });
-
-  // Listen for full members data update if needed
-  socket.on("membersData", (data) => {
-    console.log("Members data updated:", data);
-    cachedMembers = data.members;
-    debouncedUpdateMetrics();
-  });
-
-  // Utility to safely add application avoiding duplicates (by unique id)
-  function addApplication(newApp) {
-    // Use _id or applicationId depending on your data structure.
-    const id = newApp._id || newApp.applicationId || newApp.id;
-    if (
-      !cachedApplications.find(
-        (app) => (app._id || app.applicationId || app.id) === id
-      )
-    ) {
-      cachedApplications.push(newApp);
-    }
-  }
-
-  // Listen for new applications (from a dedicated event)
-  socket.on("newApplication", (application) => {
-    console.log("New application received:", application);
-    addApplication(application);
-    debouncedUpdateMetrics();
-  });
-
-  // Listen for updated applications data
-  socket.on("newApplicationsData", (appData) => {
-    console.log("New applications data received:", appData);
-    if (Array.isArray(appData)) {
-      // Replace the cache only if it is a full data array
-      cachedApplications = appData;
-    } else {
-      // Otherwise, add the single application if not already present
-      addApplication(appData);
-    }
-    debouncedUpdateMetrics();
-  });
-
-  // Listen for application removal
-  socket.on("applicationRemoved", (applicationId) => {
-    console.log("Application removed:", applicationId);
-    cachedApplications = cachedApplications.filter((app) => {
-      const id = app._id || app.applicationId || app.id;
-      return id !== applicationId;
-    });
-    debouncedUpdateMetrics();
-  });
-
-  // Listen for application approval
-  socket.on("applicationApproved", ({ applicationId, member }) => {
-    console.log("Application approved:", applicationId, member);
-    cachedApplications = cachedApplications.map((app) => {
-      const id = app._id || app.applicationId || app.id;
-      return id === applicationId ? { ...app, approved: true } : app;
-    });
-    debouncedUpdateMetrics();
-  });
-
-  async function fetchData() {
-    try {
-      const [membersRes, appsRes] = await Promise.all([
-        fetch(`${baseURL}/api/members`),
-        fetch(`${baseURL}/api/applicationsdata`),
-      ]);
-      const members = await membersRes.json();
-      const applications = await appsRes.json();
-      return { members, applications };
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return { members: [], applications: [] };
-    }
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  const totalMembersEl = document.getElementById("totalMembers");
+  const totalMemberPerEl = document.querySelector(".totalMemberPer");
+  const membersEl = document.getElementById("members");
+  const memberPerEl = document.querySelector(".memberPer");
+  const applicationEl = document.getElementById("application");
+  const applicationPerEl = document.querySelector(".applicationPer");
+  const totalRenewalsEl = document.getElementById("totalRenewals");
+  const totalRenewPerEl = document.querySelector(".totalRenewPer");
+  const premiumMemberEl = document.getElementById("premiumMember");
+  const premiumMemberPerEl = document.querySelector(".premiumMemberPer");
+  const basicMemberEl = document.getElementById("basicMember");
+  const basicMemberPerEl = document.querySelector(".basicMemberPer");
 
   // Utility to calculate percentage difference
   function calculatePercentage(current, previous) {
@@ -374,72 +286,69 @@ document.addEventListener("DOMContentLoaded", async () => {
     return `${percentage >= 0 ? "+" : ""}${percentage.toFixed(1)}%`;
   }
 
-  // Update DOM metrics based on cachedMembers and cachedApplications
+  // Update DOM metrics based on data arrays
   function updateMetrics(members, applications) {
     const now = new Date();
-    const currentMonthStart = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
+    const currentMonthStart = Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      1
     );
-    const lastMonthStart = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1)
+    const lastMonthStart = Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth() - 1,
+      1
     );
 
     // Total Members
-    const totalMembersCount = members.length;
-    document.getElementById("totalMembers").textContent = totalMembersCount;
-    const totalNewCurrent = members.filter(
-      (m) => new Date(m.createdAt) >= currentMonthStart
+    const totalCount = members.length;
+    totalMembersEl.textContent = totalCount;
+    const newCurrent = members.filter(
+      (m) => new Date(m.createdAt).getTime() >= currentMonthStart
     ).length;
-    const totalNewLast = members.filter((m) => {
-      const d = new Date(m.createdAt);
-      return d >= lastMonthStart && d < currentMonthStart;
+    const newLast = members.filter((m) => {
+      const t = new Date(m.createdAt).getTime();
+      return t >= lastMonthStart && t < currentMonthStart;
     }).length;
-    document.querySelector(
-      ".totalMemberPer"
-    ).textContent = `${calculatePercentage(
-      totalNewCurrent,
-      totalNewLast
+    totalMemberPerEl.textContent = `${calculatePercentage(
+      newCurrent,
+      newLast
     )} vs last month`;
 
-    // New Members (e.g., members created in the current month)
-    document.getElementById("members").textContent = totalNewCurrent;
-    document.querySelector(".memberPer").textContent = `${calculatePercentage(
-      totalNewCurrent,
-      totalNewLast
+    // New Members
+    membersEl.textContent = newCurrent;
+    memberPerEl.textContent = `${calculatePercentage(
+      newCurrent,
+      newLast
     )} vs last month`;
 
-    // Applications (if required)
+    // Applications
     const appsCurrent = applications.filter(
-      (app) => new Date(app.date) >= currentMonthStart
+      (app) => new Date(app.date).getTime() >= currentMonthStart
     ).length;
     const appsLast = applications.filter((app) => {
-      const d = new Date(app.date);
-      return d >= lastMonthStart && d < currentMonthStart;
+      const t = new Date(app.date).getTime();
+      return t >= lastMonthStart && t < currentMonthStart;
     }).length;
-    document.getElementById("application").textContent = appsCurrent;
-    document.querySelector(
-      ".applicationPer"
-    ).textContent = `${calculatePercentage(
+    applicationEl.textContent = appsCurrent;
+    applicationPerEl.textContent = `${calculatePercentage(
       appsCurrent,
       appsLast
     )} vs last month`;
 
-    // Upcoming Members / Renewals
+    // Renewals
     const renewalsCurrent = members.filter(
       (m) =>
         m.paymentDate?.length > 1 &&
-        new Date(m.paymentDate[m.paymentDate.length - 1]) >= currentMonthStart
+        new Date(m.paymentDate.slice(-1)[0]).getTime() >= currentMonthStart
     ).length;
-    const renewalsLast = members.filter(
-      (m) =>
-        m.paymentDate?.length > 1 &&
-        new Date(m.paymentDate[m.paymentDate.length - 1]) >= lastMonthStart &&
-        new Date(m.paymentDate[m.paymentDate.length - 1]) < currentMonthStart
-    ).length;
-    document.getElementById("totalRenewals").textContent = renewalsCurrent;
-    document.querySelector(
-      ".totalRenewPer"
-    ).textContent = `${calculatePercentage(
+    const renewalsLast = members.filter((m) => {
+      if (!m.paymentDate?.length) return false;
+      const t = new Date(m.paymentDate.slice(-1)[0]).getTime();
+      return t >= lastMonthStart && t < currentMonthStart;
+    }).length;
+    totalRenewalsEl.textContent = renewalsCurrent;
+    totalRenewPerEl.textContent = `${calculatePercentage(
       renewalsCurrent,
       renewalsLast
     )} vs last month`;
@@ -448,18 +357,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     const premiumCurrent = members.filter(
       (m) =>
         m.membershipType === "premium" &&
-        new Date(m.createdAt) >= currentMonthStart
+        new Date(m.createdAt).getTime() >= currentMonthStart
     ).length;
     const premiumLast = members.filter(
       (m) =>
         m.membershipType === "premium" &&
-        new Date(m.createdAt) >= lastMonthStart &&
-        new Date(m.createdAt) < currentMonthStart
+        (() => {
+          const t = new Date(m.createdAt).getTime();
+          return t >= lastMonthStart && t < currentMonthStart;
+        })()
     ).length;
-    document.getElementById("premiumMember").textContent = premiumCurrent;
-    document.querySelector(
-      ".premiumMemberPer"
-    ).textContent = `${calculatePercentage(
+    premiumMemberEl.textContent = premiumCurrent;
+    premiumMemberPerEl.textContent = `${calculatePercentage(
       premiumCurrent,
       premiumLast
     )} vs last month`;
@@ -468,30 +377,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     const basicCurrent = members.filter(
       (m) =>
         m.membershipType === "basic" &&
-        new Date(m.createdAt) >= currentMonthStart
+        new Date(m.createdAt).getTime() >= currentMonthStart
     ).length;
     const basicLast = members.filter(
       (m) =>
         m.membershipType === "basic" &&
-        new Date(m.createdAt) >= lastMonthStart &&
-        new Date(m.createdAt) < currentMonthStart
+        (() => {
+          const t = new Date(m.createdAt).getTime();
+          return t >= lastMonthStart && t < currentMonthStart;
+        })()
     ).length;
-    document.getElementById("basicMember").textContent = basicCurrent;
-    document.querySelector(
-      ".basicMemberPer"
-    ).textContent = `${calculatePercentage(
+    basicMemberEl.textContent = basicCurrent;
+    basicMemberPerEl.textContent = `${calculatePercentage(
       basicCurrent,
       basicLast
     )} vs last month`;
   }
-  document.addEventListener("DOMContentLoaded", async () => {
-    const socket = io(baseURL);
 
+  // Fetch initial data from REST endpoints
+  async function fetchData(baseURL) {
+    try {
+      const [membersRes, appsRes] = await Promise.all([
+        fetch(`${baseURL}/api/members`),
+        fetch(`${baseURL}/api/applicationsdata`),
+      ]);
+      return {
+        members: await membersRes.json(),
+        applications: await appsRes.json(),
+      };
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      return { members: [], applications: [] };
+    }
+  }
+
+  // Initialize socket and data caching
+  function initOverview(baseURL) {
+    const socket = io(baseURL);
     let cachedMembers = [];
     let cachedApplications = [];
-
     let updateTimeout;
-    function debouncedUpdateMetrics() {
+
+    function debouncedUpdate() {
       clearTimeout(updateTimeout);
       updateTimeout = setTimeout(
         () => updateMetrics(cachedMembers, cachedApplications),
@@ -499,35 +426,45 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
     }
 
-    function addApplication(newApp) {
-      const id = newApp._id || newApp.applicationId || newApp.id;
+    function addApplication(app) {
+      const id = app._id || app.applicationId || app.id;
       if (
         !cachedApplications.some(
-          (app) => (app._id || app.applicationId || app.id) === id
+          (a) => (a._id || a.applicationId || a.id) === id
         )
       ) {
-        cachedApplications.push(newApp);
+        cachedApplications.push(app);
       }
     }
 
-    // Socket event listeners
-    socket.on("newApplication", (application) => {
-      addApplication(application);
-      debouncedUpdateMetrics();
+    // Socket event handlers
+    socket.on("newMember", (m) => {
+      if (!cachedMembers.some((x) => x._id === m._id)) {
+        cachedMembers.push(m);
+        debouncedUpdate();
+      }
     });
 
-    socket.on("newApplicationsData", (appData) => {
-      Array.isArray(appData)
-        ? (cachedApplications = appData)
-        : addApplication(appData);
-      debouncedUpdateMetrics();
+    socket.on("membersData", (data) => {
+      cachedMembers = data.members;
+      debouncedUpdate();
     });
 
-    socket.on("applicationRemoved", (applicationId) => {
+    socket.on("newApplication", (app) => {
+      addApplication(app);
+      debouncedUpdate();
+    });
+
+    socket.on("newApplicationsData", (data) => {
+      Array.isArray(data) ? (cachedApplications = data) : addApplication(data);
+      debouncedUpdate();
+    });
+
+    socket.on("applicationRemoved", (id) => {
       cachedApplications = cachedApplications.filter(
-        (app) => (app._id || app.applicationId || app.id) !== applicationId
+        (a) => (a._id || a.applicationId || a.id) !== id
       );
-      debouncedUpdateMetrics();
+      debouncedUpdate();
     });
 
     socket.on("applicationApproved", ({ applicationId, member }) => {
@@ -536,192 +473,31 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? { ...app, approved: true }
           : app
       );
-
-      if (!cachedMembers.some((m) => m._id === member._id)) {
+      if (!cachedMembers.some((x) => x._id === member._id))
         cachedMembers.push(member);
-      }
-      debouncedUpdateMetrics();
+      debouncedUpdate();
     });
 
-    // New listener for member registrations
-    socket.on("newMember", (member) => {
-      if (!cachedMembers.some((m) => m._id === member._id)) {
-        cachedMembers.push(member);
-        debouncedUpdateMetrics();
-      }
-    });
-
-    // Existing members data listener
-    socket.on("membersData", (data) => {
-      cachedMembers = data.members;
-      debouncedUpdateMetrics();
-    });
-
-    async function fetchData() {
-      try {
-        const [membersRes, appsRes] = await Promise.all([
-          fetch(`${baseURL}/api/members`),
-          fetch(`${baseURL}/api/applicationsdata`),
-        ]);
-        return {
-          members: await membersRes.json(),
-          applications: await appsRes.json(),
-        };
-      } catch (error) {
-        console.error("Fetch error:", error);
-        return { members: [], applications: [] };
-      }
-    }
-
-    // Update DOM metrics based on cachedMembers and cachedApplications
-    function updateMetrics(members, applications) {
-      const now = new Date();
-      const currentMonthStart = new Date(
-        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
-      );
-      const lastMonthStart = new Date(
-        Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1)
-      );
-
-      // Total Members
-      const totalMembersCount = members.length;
-      document.getElementById("totalMembers").textContent = totalMembersCount;
-      const totalNewCurrent = members.filter(
-        (m) => new Date(m.createdAt) >= currentMonthStart
-      ).length;
-      const totalNewLast = members.filter((m) => {
-        const d = new Date(m.createdAt);
-        return d >= lastMonthStart && d < currentMonthStart;
-      }).length;
-      document.querySelector(
-        ".totalMemberPer"
-      ).textContent = `${calculatePercentage(
-        totalNewCurrent,
-        totalNewLast
-      )} vs last month`;
-
-      // New Members (e.g., members created in the current month)
-      document.getElementById("members").textContent = totalNewCurrent;
-      document.querySelector(".memberPer").textContent = `${calculatePercentage(
-        totalNewCurrent,
-        totalNewLast
-      )} vs last month`;
-
-      // Applications (if required)
-      const appsCurrent = applications.filter(
-        (app) => new Date(app.date) >= currentMonthStart
-      ).length;
-      const appsLast = applications.filter((app) => {
-        const d = new Date(app.date);
-        return d >= lastMonthStart && d < currentMonthStart;
-      }).length;
-      document.getElementById("application").textContent = appsCurrent;
-      document.querySelector(
-        ".applicationPer"
-      ).textContent = `${calculatePercentage(
-        appsCurrent,
-        appsLast
-      )} vs last month`;
-
-      // Upcoming Members / Renewals
-      const renewalsCurrent = members.filter(
-        (m) =>
-          m.paymentDate?.length > 1 &&
-          new Date(m.paymentDate[m.paymentDate.length - 1]) >= currentMonthStart
-      ).length;
-      const renewalsLast = members.filter(
-        (m) =>
-          m.paymentDate?.length > 1 &&
-          new Date(m.paymentDate[m.paymentDate.length - 1]) >= lastMonthStart &&
-          new Date(m.paymentDate[m.paymentDate.length - 1]) < currentMonthStart
-      ).length;
-      document.getElementById("totalRenewals").textContent = renewalsCurrent;
-      document.querySelector(
-        ".totalRenewPer"
-      ).textContent = `${calculatePercentage(
-        renewalsCurrent,
-        renewalsLast
-      )} vs last month`;
-
-      // Premium Members
-      const premiumCurrent = members.filter(
-        (m) =>
-          m.membershipType === "premium" &&
-          new Date(m.createdAt) >= currentMonthStart
-      ).length;
-      const premiumLast = members.filter(
-        (m) =>
-          m.membershipType === "premium" &&
-          new Date(m.createdAt) >= lastMonthStart &&
-          new Date(m.createdAt) < currentMonthStart
-      ).length;
-      document.getElementById("premiumMember").textContent = premiumCurrent;
-      document.querySelector(
-        ".premiumMemberPer"
-      ).textContent = `${calculatePercentage(
-        premiumCurrent,
-        premiumLast
-      )} vs last month`;
-
-      // Basic Members
-      const basicCurrent = members.filter(
-        (m) =>
-          m.membershipType === "basic" &&
-          new Date(m.createdAt) >= currentMonthStart
-      ).length;
-      const basicLast = members.filter(
-        (m) =>
-          m.membershipType === "basic" &&
-          new Date(m.createdAt) >= lastMonthStart &&
-          new Date(m.createdAt) < currentMonthStart
-      ).length;
-      document.getElementById("basicMember").textContent = basicCurrent;
-      document.querySelector(
-        ".basicMemberPer"
-      ).textContent = `${calculatePercentage(
-        basicCurrent,
-        basicLast
-      )} vs last month`;
-    }
-
-    // Initial load
-    const { members, applications } = await fetchData();
-    cachedMembers = members;
-    cachedApplications = applications;
-    updateMetrics(cachedMembers, cachedApplications);
-
-    // Fallback and cleanup
-    setTimeout(async () => {
-      if (document.getElementById("totalMembers").textContent === "0") {
-        const { members } = await fetchData();
-        cachedMembers = members;
-        updateMetrics(cachedMembers, cachedApplications);
-      }
-    }, 5000);
-
-    window.addEventListener("beforeunload", () => {
-      socket.removeAllListeners();
-    });
-  });
-  // Initial load of data
-  const { members, applications } = await fetchData();
-  cachedMembers = members;
-  cachedApplications = applications;
-  updateMetrics(cachedMembers, cachedApplications);
-
-  // Fallback: if socket fails, refresh via HTTP after 5 seconds
-  setTimeout(async () => {
-    if (document.getElementById("totalMembers").textContent === "0") {
-      const { members } = await fetchData();
+    // Initial load and fallback
+    fetchData(baseURL).then(({ members, applications }) => {
       cachedMembers = members;
+      cachedApplications = applications;
       updateMetrics(cachedMembers, cachedApplications);
-    }
-  }, 5000);
+      setTimeout(() => {
+        if (totalMembersEl.textContent === "0") {
+          fetchData(baseURL).then(({ members }) => {
+            cachedMembers = members;
+            updateMetrics(cachedMembers, cachedApplications);
+          });
+        }
+      }, 5000);
+    });
 
-  // Cleanup socket event listeners on unload to prevent memory leaks
-  window.addEventListener("beforeunload", () => {
-    socket.removeAllListeners();
-  });
+    window.addEventListener("beforeunload", () => socket.removeAllListeners());
+  }
+
+  // Kick things off
+  initOverview(baseURL);
 });
 
 // CHART
@@ -1198,4 +974,94 @@ document.addEventListener("DOMContentLoaded", () => {
       updateChart(timePeriodData[period].stats);
       updateStatsCards(timePeriodData[period].stats, previousStats, period);
     });
+});
+
+// Membership Alert
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.querySelector(".memberAlert");
+  const tableRows = container.querySelector(".table-rows");
+  const emptyState = container.querySelector(".empty-state");
+  const expiringCount = document.getElementById("expiringCount");
+  const expiredCount = document.getElementById("expiredCount");
+  const today = new Date();
+  const THRESHOLD_DAYS = 7;
+
+  try {
+    const res = await fetch(`${baseURL}/api/members`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const members = await res.json();
+
+    const expiringSoon = [];
+    const expired = [];
+
+    members.forEach((m) => {
+      const end = new Date(m.membershipEndDate);
+      const diffDays = (end - today) / (1000 * 60 * 60 * 24);
+
+      if (diffDays < 0) {
+        expired.push(m);
+      } else if (diffDays <= THRESHOLD_DAYS) {
+        expiringSoon.push(m);
+      }
+    });
+
+    // Update counts
+    expiringCount.textContent = expiringSoon.length;
+    expiredCount.textContent = expired.length;
+
+    const toShow = [
+      ...expiringSoon.sort(
+        (a, b) => new Date(a.membershipEndDate) - new Date(b.membershipEndDate)
+      ),
+      ...expired.sort(
+        (a, b) => new Date(b.membershipEndDate) - new Date(a.membershipEndDate)
+      ),
+    ];
+
+    if (!toShow.length) {
+      emptyState.style.display = "flex";
+      return;
+    }
+
+    emptyState.style.display = "none";
+    tableRows.innerHTML = "";
+
+    toShow.forEach((m) => {
+      const end = new Date(m.membershipEndDate);
+      const diff = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+      const isExpired = diff < 0;
+
+      const row = document.createElement("div");
+      row.classList.add("table-row", isExpired ? "expired" : "expiring");
+
+      row.innerHTML = `
+        <div class="cell name">${m.firstName} ${m.lastName}</div>
+        <div class="cell id">${m.memberId}</div>
+        <div class="cell email">${m.email}</div>
+        <div class="cell status ${isExpired ? "expired" : "expiring"}">
+          ${isExpired ? "Expired" : "Expiring"}
+        </div>
+        <div class="cell days">
+          ${
+            isExpired
+              ? `${Math.abs(diff)} days ago`
+              : `in ${diff} day${diff > 1 ? "s" : ""}`
+          }
+        </div>
+      `;
+
+      tableRows.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Failed loading members:", err);
+    tableRows.innerHTML = `
+      <div class="error-message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        Could not load member data
+      </div>
+    `;
+    emptyState.style.display = "none";
+  }
 });

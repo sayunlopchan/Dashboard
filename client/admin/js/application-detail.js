@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Extract applicationId from the URL query parameters
+  // URL & BASE CONFIG
   const urlParams = new URLSearchParams(window.location.search);
   const applicationId = urlParams.get("applicationId");
 
@@ -8,108 +8,103 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Fetch application details from the API
+  // CACHE DOM ELEMENTS
+  const appNameEl = document.querySelector(".application-name");
+  const addressEl = document.querySelector(".application-address");
+  const statusBadgeEl = document.querySelector(".status-badge");
+
+  const emailEl = document.querySelector(".email-value");
+  const dobEl = document.querySelector(".dob-value");
+  const phoneEl = document.querySelector(".phoneNumber-value");
+
+  const emergencyNameEl = document.querySelector(".name-value");
+  const emergencyRelationEl = document.querySelector(".relationship-value");
+  const emergencyNumberEl = document.querySelector(".number-value");
+
+  const renewalEl = document.querySelector(".renewal-value");
+  const startEl = document.querySelector(".start-value");
+  const endEl = document.querySelector(".end-value");
+
+  const acceptBtn = document.getElementById("accept");
+  const rejectBtn = document.getElementById("reject");
+
+  // HELPER: FETCH APPLICATION DETAILS
   async function fetchApplicationDetails(id) {
     try {
-      const response = await fetch(`${baseURL}/api/applications/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch application data");
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching application details:", error);
+      const res = await fetch(`${baseURL}/api/applications/${id}`);
+      if (!res.ok) throw new Error("Failed to fetch application data");
+      return await res.json();
+    } catch (err) {
+      console.error("Error fetching application details:", err);
       return null;
     }
   }
 
+  // LOAD & RENDER DATA ─────────────────────────────────────────────────────
   const applicationData = await fetchApplicationDetails(applicationId);
-
   if (applicationData) {
-    // Update the document title with the applicant's name
+    // Page title
     document.title = `Application Details - ${applicationData.firstName} ${applicationData.lastName}`;
 
-    // Update Header Section
-    document.querySelector(
-      ".application-name"
-    ).textContent = `${applicationData.firstName} ${applicationData.lastName}`;
-    // Update Address
-    document.querySelector(".application-address").textContent = `Address: ${
-      applicationData.address || "N/A"
-    }`;
-    // Update status badge with membership type
-    document.querySelector(".status-badge").textContent =
-      applicationData.membershipType || "N/A";
+    // Header & Address
+    appNameEl.textContent = `${applicationData.firstName} ${applicationData.lastName}`;
+    addressEl.textContent = `Address: ${applicationData.address || "N/A"}`;
+    statusBadgeEl.textContent = applicationData.membershipType || "N/A";
 
-    // Update Personal Information Card
-    document.querySelector(".email-value").textContent =
-      applicationData.email || "N/A";
-    document.querySelector(".dob-value").textContent = applicationData.dob
+    // Personal Info
+    emailEl.textContent = applicationData.email || "N/A";
+    dobEl.textContent = applicationData.dob
       ? new Date(applicationData.dob).toLocaleDateString()
       : "N/A";
-    document.querySelector(".phoneNumber-value").textContent =
+    phoneEl.textContent =
       applicationData.phoneNumber ||
       applicationData.personalPhoneNumber ||
       "N/A";
 
-    // Update Emergency Contact Card
-    if (applicationData.emergencyContact) {
-      document.querySelector(".name-value").textContent =
-        applicationData.emergencyContact.name || "N/A";
-      document.querySelector(".relationship-value").textContent =
-        applicationData.emergencyContact.relationship || "N/A";
-      document.querySelector(".number-value").textContent =
-        applicationData.emergencyContact.phoneNumber || "N/A";
-    } else {
-      document.querySelector(".name-value").textContent = "N/A";
-      document.querySelector(".relationship-value").textContent = "N/A";
-      document.querySelector(".number-value").textContent = "N/A";
-    }
+    // Emergency Contact
+    emergencyNameEl.textContent =
+      applicationData.emergencyContact?.name || "N/A";
+    emergencyRelationEl.textContent =
+      applicationData.emergencyContact?.relationship || "N/A";
+    emergencyNumberEl.textContent =
+      applicationData.emergencyContact?.phoneNumber || "N/A";
 
-    // Update Membership Details Card
-    document.querySelector(".renewal-value").textContent = applicationData.renew
-      ? "Active"
-      : "Inactive";
-    document.querySelector(".start-value").textContent =
-      applicationData.membershipStartDate
-        ? new Date(applicationData.membershipStartDate).toLocaleDateString()
-        : "N/A";
-    document.querySelector(".end-value").textContent =
-      applicationData.membershipEndDate
-        ? new Date(applicationData.membershipEndDate).toLocaleDateString()
-        : "N/A";
+    // Membership Details
+    renewalEl.textContent = applicationData.renew ? "Active" : "Inactive";
+    startEl.textContent = applicationData.membershipStartDate
+      ? new Date(applicationData.membershipStartDate).toLocaleDateString()
+      : "N/A";
+    endEl.textContent = applicationData.membershipEndDate
+      ? new Date(applicationData.membershipEndDate).toLocaleDateString()
+      : "N/A";
   }
 
-  // Attach event listeners for Accept and Reject buttons
-  document.getElementById("accept").addEventListener("click", async () => {
+  // EVENT HANDLERS ─────────────────────────────────────────────────────────
+  acceptBtn.addEventListener("click", async () => {
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${baseURL}/api/applications/${applicationId}/approve`,
-        {
-          method: "PUT",
-        }
+        { method: "PUT" }
       );
-      if (!response.ok) throw new Error("Failed to approve application");
-      alert("Application approved and deleted successfully.");
-      // after success approve, redirect to applications:
-      window.location.href = "/admin/pages/applications";
-    } catch (error) {
-      console.error("Error approving application:", error);
+      if (!res.ok) throw new Error("Failed to approve application");
+      alert("Application approved successfully.");
+      window.history.back();
+    } catch (err) {
+      console.error("Error approving application:", err);
       alert("Error approving application. Please try again later.");
     }
   });
 
-  document.getElementById("reject").addEventListener("click", async () => {
+  rejectBtn.addEventListener("click", async () => {
     try {
-      const response = await fetch(
-        `${baseURL}/api/applications/${applicationId}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (!response.ok) throw new Error("Failed to reject application");
-      alert("Application rejected and deleted successfully.");
-      // redirect the user after rejection:
-      window.location.href = "/admin/pages/applications";
-    } catch (error) {
-      console.error("Error rejecting application:", error);
+      const res = await fetch(`${baseURL}/api/applications/${applicationId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to reject application");
+      alert("Application rejected successfully.");
+      window.history.back();
+    } catch (err) {
+      console.error("Error rejecting application:", err);
       alert("Error rejecting application. Please try again later.");
     }
   });

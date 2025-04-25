@@ -1,5 +1,4 @@
 // filterModule.js
-
 class FilterModule {
   constructor(baseApiUrl, endpoint) {
     this.BASE_API_URL = baseApiUrl;
@@ -27,7 +26,7 @@ class FilterModule {
   }
 
   applyFilter(filters, callback) {
-    this.fetchData(filters).then(data => {
+    this.fetchData(filters).then((data) => {
       callback(data);
     });
   }

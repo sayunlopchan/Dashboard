@@ -11,6 +11,7 @@ const memberRoutes = require("./routes/member.routes.js");
 const applicationsData = require("./routes/applicationsData.routes.js");
 const errorHandler = require("./utils/errorHandler.js");
 const initializeSocket = require("./socket.js");
+const scheduleExpiryJob = require("./controllers/notificationScheduler.controller.js");
 const cookieParser = require("cookie-parser");
 
 // Admin route protection middleware
@@ -26,6 +27,7 @@ const server = http.createServer(app);
 
 // Initialize Socket.IO
 const io = initializeSocket(server);
+scheduleExpiryJob(io); // ⏰ Schedule membership expiry notifications
 
 // Enable CORS for Express routes
 const allowedOrigins = [
@@ -139,8 +141,8 @@ app.use(errorHandler);
 // Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
   console.log(
-    `Admin static files are protected and served only via the secure route.`
+    `🛡️ Admin static files are protected and served only via the secure route.`
   );
 });

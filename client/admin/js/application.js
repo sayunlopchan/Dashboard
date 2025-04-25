@@ -70,7 +70,7 @@ function applyFilters() {
   displayApplications(filtered);
 }
 
-// Event listeners
+// Event listeners for filters and search
 document
   .getElementById("filterGender")
   .addEventListener("change", applyFilters);
@@ -81,5 +81,21 @@ document
   .getElementById("applicationSearchInput")
   .addEventListener("input", applyFilters);
 
-// Initial fetch
+// Initial fetch when the page loads
 fetchApplications();
+
+// Refresh page when returning to the page
+window.addEventListener("pageshow", (event) => {
+  // Check if navigating back from the cache or forward
+  if (
+    event.persisted ||
+    performance.getEntriesByType("navigation")[0].type === "back_forward"
+  ) {
+    fetchApplications(); // Re-fetch data when navigating back/forward
+  }
+});
+
+// Refresh data when the tab comes into focus (optional)
+window.addEventListener("focus", () => {
+  fetchApplications();
+});

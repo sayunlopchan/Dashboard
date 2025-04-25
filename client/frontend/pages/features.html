@@ -16,7 +16,6 @@
     <!-- Title -->
     <script defer src="/frontend/main.js"></script>
     <script defer src="/frontend/script.js"></script>
-    <script defer src="/frontend/js/setting-menu.js"></script>
   </head>
 
 
@@ -27,94 +26,6 @@
       <div class="spinner"></div>
     </div>
 
-    <!-- dialog container-->
-    <div class="unauthorized-dialog-backdrop backdrop">
-      <div class="unauthorized-dialog-box">
-        <h2>Unauthorized</h2>
-        <p>You need to be logged in to access the page.</p>
-        <button id="closeDialogBtn">Close</button>
-      </div>
-    </div>
-
-    <!-- Logout confirmation dialog -->
-    <div class="confirmation-dialog-backdrop backdrop">
-      <div class="logout-confirm-dialog-box">
-        <h2>Confirm Logout</h2>
-        <p>Are you sure you want to logout?</p>
-        <div class="dialog-buttons">
-          <button id="confirmLogoutBtn">Confirm</button>
-          <button id="cancelLogoutBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Login Signup Dialog Box -->
-    <div class="signin-signup-dialog-backdrop backdrop">
-      <div class="signin-signup-dialog-box">
-        <form action="" class="login-section" id="loginSection">
-          <!-- login Content -->
-          <h2>Welcome User !</h2>
-          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus, accusamus.</p>
-
-          <div class="input-box">
-            <input type="email" id="login-email" placeholder="Enter your email" required />
-            <span class="error-message"></span> <!-- Added for error messages -->
-          </div>
-          <div class="input-box">
-            <input type="password" id="login-password" placeholder="Enter your password" required />
-            <span class="error-message"></span> <!-- Added for error messages -->
-          </div>
-
-          <div class="login-footer">
-            <button class="btn-fill" type="submit" id="login-submit-btn">Login</button>
-            <p id="toggle-text">Don't have an account? <span id="toggle-signup">Sign up</span></p>
-          </div>
-
-          <div class="form-img-container">
-            <img src="/frontend/assets/textures/gym-graphic.svg" alt="gym-graphic">
-          </div>
-        </form>
-
-        <form action="" class="signup-section" id="signupSection">
-          <!-- signup Content -->
-          <h2>Let's create your account!</h2>
-          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Delectus, accusamus.</p>
-
-          <div class="input-box">
-            <input type="text" id="signup-username" placeholder="Enter your username" required />
-            <span class="error-message"></span> <!-- Added for error messages -->
-          </div>
-          <div class="input-box">
-            <input type="email" id="signup-email" placeholder="Enter your email" required />
-            <span class="error-message"></span> <!-- Added for error messages -->
-          </div>
-          <div class="input-box">
-            <input type="password" id="signup-password" placeholder="Enter your password" required />
-            <span class="error-message"></span> <!-- Added for error messages -->
-          </div>
-          <div class="input-box">
-            <input type="password" id="signup-confirm-password" placeholder="Confirm password" required />
-            <span class="error-message"></span> <!-- Added for error messages -->
-          </div>
-
-          <div class="login-footer">
-            <button class="btn-fill" type="submit" id="signup-submit-btn">Sign up</button>
-            <p id="toggle-text">Already have an account? <span id="toggle-login">Login</span></p>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Settings menu -->
-    <div class="settings-menu">
-      <i class="fa-solid fa-gear"></i>
-      <div class="setting-menu-wrapper">
-        <ul>
-          <li id="dashboard-li">Dashboard</li>
-          <li id="auth-button">Login</li>
-        </ul>
-      </div>
-    </div>
 
     <!-- Slide-in Menu for mobile -->
     <div class="menu-backdrop backdrop"></div>
