@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Expiry Notification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        text-align: center;
+        color: #007bff;
+      }
+
+      .message {
+        font-size: 16px;
+        color: #333333;
+      }
+
+      .footer {
+        font-size: 12px;
+        color: #6c757d;
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>Membership Expiry Reminder</h1>
+      </div>
+      <div class="message">
+        <p>Hello {{firstName}},</p>
+        <p>Your membership is about to expire. {{message}}</p>
+        <p>We recommend renewing it soon to continue enjoying our services.</p>
+      </div>
+      <div class="footer">
+        <p>If you have any questions, feel free to contact us.</p>
+        <p>&copy; 2025 Your Company</p>
+      </div>
+    </div>
+  </body>
+
+</html>
